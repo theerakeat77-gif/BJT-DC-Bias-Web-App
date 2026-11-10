@@ -111,9 +111,47 @@ class TestRoutes(unittest.TestCase):
             "vcc": "12", "r1": "0", "r2": "22k", "rc": "2.2k",
             "re": "1k", "beta": "100", "vbe": "0.70"})
         self.assertEqual(resp.status_code, 200)
-        self.assertIn("R1", resp.get_data(as_text=True))
+        body = resp.get_data(as_text=True)
+        self.assertIn('class="errors"', body)
+        self.assertIn("R1 ต้องมากกว่า 0", body)
 
     def test_post_empty_form_shows_errors(self):
         resp = self.client.post("/calculate", data={})
         self.assertEqual(resp.status_code, 200)
-        self.assertIn("VCC", resp.get_data(as_text=True))
+        body = resp.get_data(as_text=True)
+        self.assertIn('class="errors"', body)
+        self.assertEqual(body.count("<li>"), 7)
+
+    def test_get_index_shows_interpreted_resistance(self):
+        body = self.client.get("/").get_data(as_text=True)
+        self.assertIn("100,000 Ω", body)
+        self.assertIn("2,200 Ω", body)
+
+    def test_post_shows_interpreted_resistance(self):
+        resp = self.client.post("/calculate", data={
+            "vcc": "12", "r1": "100k", "r2": "22k", "rc": "2.2k",
+            "re": "1k", "beta": "100", "vbe": "0.70"})
+        body = resp.get_data(as_text=True)
+        self.assertIn("100,000 Ω", body)
+        self.assertIn("1,000 Ω", body)
+
+
+class TestNonFiniteInput(unittest.TestCase):
+    def test_parse_float_rejects_nan_and_inf(self):
+        for text in ("nan", "NaN", "inf", "-inf", "1e309"):
+            with self.assertRaises(ValueError):
+                parse_float(text)
+
+    def test_collect_inputs_rejects_nan_resistance(self):
+        form = {"vcc": "12", "r1": "100k", "r2": "nan", "rc": "2.2k",
+                "re": "1k", "beta": "100", "vbe": "0.70"}
+        inp, errors = collect_inputs(form)
+        self.assertIsNone(inp)
+        self.assertTrue(any("R2" in e for e in errors))
+
+    def test_collect_inputs_rejects_infinite_vcc(self):
+        form = {"vcc": "inf", "r1": "100k", "r2": "22k", "rc": "2.2k",
+                "re": "1k", "beta": "100", "vbe": "0.70"}
+        inp, errors = collect_inputs(form)
+        self.assertIsNone(inp)
+        self.assertTrue(any("VCC" in e for e in errors))

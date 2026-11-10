@@ -8,19 +8,19 @@
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-ผลรวมล่าสุด: **Ran 23 tests — OK (0 failures, 0 errors)**
-(5 engineering tests + 14 parser/validation tests + 4 Flask route tests)
+ผลรวมล่าสุด: **Ran 28 tests — OK (0 failures, 0 errors)**
+(5 engineering tests + 7 parser + 7 validation + 3 non-finite + 6 Flask route tests)
 
 ## ตารางตรวจรับ A1–A7
 
 | เกณฑ์ | สิ่งที่ทดสอบ | คำสั่ง/วิธีที่รัน | ผลที่ได้จริง |
 |---|---|---|---|
 | **A1** `GET /` | หน้าแรก HTTP 200 และมี input ครบ 7 ช่อง (`vcc, r1, r2, rc, re, beta, vbe`) | `TestRoutes.test_get_index_returns_form` และเปิด `http://127.0.0.1:5000/` | ผ่าน — 200, ฟอร์มมีค่าเริ่มต้นจาก handout ครบ |
-| **A2** `POST /calculate` | ส่งค่าตัวอย่างแล้วได้ผลคำนวณจาก Python (ไม่ใช่ค่าคงที่ใน HTML) | `TestRoutes.test_post_calculate_returns_engineering_result` และกด Calculate ในเบราว์เซอร์ | ผ่าน — 200, แสดง `VCE 8.052 V`, `IC 1.230 mA`, badge `ACTIVE` |
+| **A2** `POST /calculate` | ส่งค่าตัวอย่างแล้วได้ผลคำนวณจาก Python (ไม่ใช่ค่าคงที่ใน HTML) และแสดงค่า Ω ที่ตีความได้ข้างช่องกรอก | `TestRoutes.test_post_calculate_returns_engineering_result`, `test_get_index_shows_interpreted_resistance`, `test_post_shows_interpreted_resistance` และกด Calculate ในเบราว์เซอร์ | ผ่าน — 200, แสดง `VCE 8.052 V`, `IC 1.230 mA`, badge `ACTIVE`; ช่อง `100k` แสดง `= 100,000 Ω` |
 | **A3** Engineering reference | เทียบค่าที่คำนวณกับ independent calculation (spec §8) | `TestReferenceOperatingPoint.test_reference_operating_point` + `test_kvl_consistency` | ผ่าน — ค่าตรงทุกตัว (ตารางด้านล่าง) และ KVL ปิด |
-| **A4** Validation | ฟอร์มว่าง, ค่าที่ไม่ใช่ตัวเลข, ค่า 0/ติดลบ, `VBE >= VCC` ต้องได้ error ไม่ 500 | `TestCollectInputs` (7 tests) + `TestRoutes.test_post_invalid_input_shows_error_without_crash` + `test_post_empty_form_shows_errors` | ผ่าน — 200 ทุกกรณี, ฟอร์มว่างรายงาน 7 ช่อง |
+| **A4** Validation | ฟอร์มว่าง, ค่าที่ไม่ใช่ตัวเลข, ค่า 0/ติดลบ, `nan`/`inf`, `VBE >= VCC` ต้องได้ error ไม่ 500 | `TestCollectInputs` (7 tests), `TestNonFiniteInput` (3 tests) + `TestRoutes.test_post_invalid_input_shows_error_without_crash` + `test_post_empty_form_shows_errors` | ผ่าน — 200 ทุกกรณี, ฟอร์มว่างรายงาน 7 ช่อง, `nan`/`inf` ถูกปฏิเสธ |
 | **A5** Outside Active Region | CUTOFF และ SATURATION ต้องมี warning และไม่ clamp | `TestRegionDetection` (3 tests) + ตรวจในเบราว์เซอร์ 2 กรณี | ผ่าน — CUTOFF: กระแส 0, `VC = VCE = 12 V`; SATURATION: รายงาน `VCE = -1.541 V` ดิบ + warning |
-| **A6** Automated tests | ≥3 engineering tests + ≥1 Flask test client test | `.\.venv\Scripts\python.exe -m unittest discover -s tests -v` | ผ่าน — **23 tests OK** (engineering 5, Flask route 4) |
+| **A6** Automated tests | ≥3 engineering tests + ≥1 Flask test client test | `.\.venv\Scripts\python.exe -m unittest discover -s tests -v` | ผ่าน — **28 tests OK** (engineering 5, Flask route 6) |
 | **A7** GitHub | `.gitignore` กันไฟล์ต้องห้าม, มี `README.md`, commit ครบ, repo Public | ตรวจ `git status` / GitHub Desktop → Publish repository | commit ครบ 5 รอบในเครื่อง; **Publish + Push ทำใน GitHub Desktop โดยผู้ใช้** (ต้องเอา *Keep this code private* ออก) |
 
 ## ค่าที่เว็บแสดง vs Independent Calculation

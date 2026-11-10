@@ -82,6 +82,12 @@ input:focus {
   border-color: var(--accent);
 }
 
+.parsed {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-family: Consolas, monospace;
+}
+
 .hint {
   margin: 14px 0 18px;
   color: var(--muted);

@@ -28,21 +28,25 @@
         <label for="r1">
           <span class="label">R1 (Ω)</span>
           <input type="text" id="r1" name="r1" value="{{ form.r1 }}" inputmode="text" autocomplete="off">
+          {% if parsed.r1 %}<span class="parsed">= {{ "{:,.0f}".format(parsed.r1) }} Ω</span>{% endif %}
         </label>
 
         <label for="r2">
           <span class="label">R2 (Ω)</span>
           <input type="text" id="r2" name="r2" value="{{ form.r2 }}" inputmode="text" autocomplete="off">
+          {% if parsed.r2 %}<span class="parsed">= {{ "{:,.0f}".format(parsed.r2) }} Ω</span>{% endif %}
         </label>
 
         <label for="rc">
           <span class="label">RC (Ω)</span>
           <input type="text" id="rc" name="rc" value="{{ form.rc }}" inputmode="text" autocomplete="off">
+          {% if parsed.rc %}<span class="parsed">= {{ "{:,.0f}".format(parsed.rc) }} Ω</span>{% endif %}
         </label>
 
         <label for="re">
           <span class="label">RE (Ω)</span>
           <input type="text" id="re" name="re" value="{{ form.re }}" inputmode="text" autocomplete="off">
+          {% if parsed.re %}<span class="parsed">= {{ "{:,.0f}".format(parsed.re) }} Ω</span>{% endif %}
         </label>
 
         <label for="beta">
