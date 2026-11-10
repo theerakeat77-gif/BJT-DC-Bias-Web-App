@@ -4,7 +4,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app import collect_inputs, parse_float, parse_resistance
+from app import app, collect_inputs, parse_float, parse_resistance
 
 
 class TestParseResistance(unittest.TestCase):
@@ -82,3 +82,38 @@ class TestCollectInputs(unittest.TestCase):
         inp, errors = collect_inputs({})
         self.assertIsNone(inp)
         self.assertEqual(len(errors), 7)
+
+
+class TestRoutes(unittest.TestCase):
+    def setUp(self):
+        app.config["TESTING"] = True
+        self.client = app.test_client()
+
+    def test_get_index_returns_form(self):
+        resp = self.client.get("/")
+        self.assertEqual(resp.status_code, 200)
+        body = resp.get_data(as_text=True)
+        for field in ("vcc", "r1", "r2", "rc", "re", "beta", "vbe"):
+            self.assertIn(f'name="{field}"', body)
+
+    def test_post_calculate_returns_engineering_result(self):
+        resp = self.client.post("/calculate", data={
+            "vcc": "12", "r1": "100k", "r2": "22k", "rc": "2.2k",
+            "re": "1k", "beta": "100", "vbe": "0.70"})
+        self.assertEqual(resp.status_code, 200)
+        body = resp.get_data(as_text=True)
+        self.assertIn("8.052", body)   # VCE
+        self.assertIn("1.230", body)   # IC (mA)
+        self.assertIn("ACTIVE", body)
+
+    def test_post_invalid_input_shows_error_without_crash(self):
+        resp = self.client.post("/calculate", data={
+            "vcc": "12", "r1": "0", "r2": "22k", "rc": "2.2k",
+            "re": "1k", "beta": "100", "vbe": "0.70"})
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("R1", resp.get_data(as_text=True))
+
+    def test_post_empty_form_shows_errors(self):
+        resp = self.client.post("/calculate", data={})
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("VCC", resp.get_data(as_text=True))

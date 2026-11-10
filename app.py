@@ -7,9 +7,9 @@ lives in ``dc_bias.py`` and must stay independent of Flask.
 
 from collections.abc import Mapping
 
-from flask import Flask
+from flask import Flask, render_template, request
 
-from dc_bias import BiasInput
+from dc_bias import BiasInput, calculate_dc_bias
 
 FIELDS = ("vcc", "r1", "r2", "rc", "re", "beta", "vbe")
 
@@ -111,3 +111,22 @@ def collect_inputs(form: Mapping[str, str]) -> tuple[BiasInput | None, list[str]
         return None, errors
 
     return BiasInput(**values), []
+
+
+@app.get("/")
+def index():
+    return render_template("index.html", form=DEFAULTS, result=None, errors=[])
+
+
+@app.post("/calculate")
+def calculate():
+    form = {field: request.form.get(field, "") for field in FIELDS}
+    bias_input, errors = collect_inputs(request.form)
+    if errors:
+        return render_template("index.html", form=form, result=None, errors=errors)
+    return render_template(
+        "index.html",
+        form=form,
+        result=calculate_dc_bias(bias_input),
+        errors=[],
+    )

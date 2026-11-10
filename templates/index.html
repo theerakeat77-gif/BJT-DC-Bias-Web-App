@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BJT DC Bias Calculator</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="card">
+    <header class="card-header">
+      <h1>BJT Common-Emitter DC Bias</h1>
+      <p class="subtitle">วงจร Voltage-Divider Bias — คำนวณจุดทำงาน DC</p>
+    </header>
+
+    <form method="post" action="/calculate">
+      <div class="grid">
+        <label for="vcc">
+          <span class="label">VCC (V)</span>
+          <input type="text" id="vcc" name="vcc" value="{{ form.vcc }}" inputmode="decimal" autocomplete="off">
+        </label>
+
+        <label for="vbe">
+          <span class="label">VBE (V)</span>
+          <input type="text" id="vbe" name="vbe" value="{{ form.vbe }}" inputmode="decimal" autocomplete="off">
+        </label>
+
+        <label for="r1">
+          <span class="label">R1 (Ω)</span>
+          <input type="text" id="r1" name="r1" value="{{ form.r1 }}" inputmode="text" autocomplete="off">
+        </label>
+
+        <label for="r2">
+          <span class="label">R2 (Ω)</span>
+          <input type="text" id="r2" name="r2" value="{{ form.r2 }}" inputmode="text" autocomplete="off">
+        </label>
+
+        <label for="rc">
+          <span class="label">RC (Ω)</span>
+          <input type="text" id="rc" name="rc" value="{{ form.rc }}" inputmode="text" autocomplete="off">
+        </label>
+
+        <label for="re">
+          <span class="label">RE (Ω)</span>
+          <input type="text" id="re" name="re" value="{{ form.re }}" inputmode="text" autocomplete="off">
+        </label>
+
+        <label for="beta">
+          <span class="label">β (hFE)</span>
+          <input type="text" id="beta" name="beta" value="{{ form.beta }}" inputmode="decimal" autocomplete="off">
+        </label>
+      </div>
+
+      <p class="hint">ค่าความต้านทานรับได้ทั้ง <code>100000</code>, <code>100k</code>, <code>2.2k</code>, <code>1M</code></p>
+
+      <button type="submit">Calculate</button>
+    </form>
+
+    {% if errors %}
+    <ul class="errors">
+      {% for error in errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if result %}
+    <section class="results">
+      <h2>
+        ผลลัพธ์
+        <span class="badge badge-{{ result.region|lower }}">{{ result.region }}</span>
+      </h2>
+
+      <table>
+        <tbody>
+          <tr><th scope="row">VB</th><td class="num">{{ "%.3f"|format(result.vb) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">VE</th><td class="num">{{ "%.3f"|format(result.ve) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">VC</th><td class="num">{{ "%.3f"|format(result.vc) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">VCE</th><td class="num">{{ "%.3f"|format(result.vce) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">IC</th><td class="num">{{ "%.3f"|format(result.ic * 1000.0) }}</td><td class="unit">mA</td></tr>
+          <tr><th scope="row">IE</th><td class="num">{{ "%.3f"|format(result.ie * 1000.0) }}</td><td class="unit">mA</td></tr>
+          <tr><th scope="row">IB</th><td class="num">{{ "%.3f"|format(result.ib * 1000000.0) }}</td><td class="unit">µA</td></tr>
+        </tbody>
+      </table>
+
+      {% if result.warnings %}
+      <ul class="warnings">
+        {% for warning in result.warnings %}
+        <li>{{ warning }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>
