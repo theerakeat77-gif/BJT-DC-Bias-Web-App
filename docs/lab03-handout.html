@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENG29 2121 · Lab 03 — BJT DC Bias และการตรวจผลผ่าน Browser</title>
+<style>
+:root{--paper:#f3f7fa;--ink:#17344b;--navy:#103658;--strong:#064e54;--teal:#07766e;--mint:#e8f6f2;--muted:#415e71;--line:#cedde7;--white:#fff;--amber:#fff5e8;--rust:#823c17}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.72 "Noto Sans Thai",Tahoma,Arial,sans-serif}
+a{color:#135e8a;text-underline-offset:.2em}a:focus-visible,summary:focus-visible,.scroll:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+.shell{max-width:1160px;margin:auto;padding:0 26px}
+.hero{background:#103658;color:white;padding:48px 0 38px;border-bottom:5px solid #27ac9c}
+.eyebrow,.kicker{font-size:.79rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase;margin:0}
+.eyebrow{color:#afdedc}.kicker{color:var(--teal)}
+h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.18;letter-spacing:-.025em;margin:14px 0}
+h1 span{display:block;font-size:.54em;letter-spacing:0;color:#ccebe9;margin-top:10px}
+.hero p.lead{max-width:760px;font-size:1.07rem;margin:16px 0}
+.tags,.nav{display:flex;flex-wrap:wrap;gap:8px 12px}
+.tags span{border:1px solid #608396;border-radius:18px;padding:3px 13px;font-size:.8rem;color:#f5fbff}
+.nav{padding:14px 0 0}.nav a{text-decoration:none;background:#fff;border:1px solid var(--line);padding:4px 11px;border-radius:7px;font-size:.86rem}
+main{padding-bottom:32px!important}
+section{margin:20px 0;padding:clamp(18px,4vw,32px);background:white;border:1px solid var(--line);border-radius:12px;scroll-margin-top:10px}
+h2,h3{line-height:1.32;color:var(--navy);overflow-wrap:anywhere}h2{font-size:clamp(1.4rem,3.9vw,2rem);margin:6px 0 13px}h3{font-size:1.12rem;margin:21px 0 8px}
+p{margin:0 0 .82em}p:last-child{margin-bottom:0}ul,ol{margin:7px 0 12px;padding-left:1.45em}li{margin:4px 0}small,.small,figcaption{font-size:.86rem;color:var(--muted)}
+.goals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}
+.goal{border:1px solid var(--line);border-radius:8px;padding:14px;background:#f8fbfd;min-width:0}.goal b{display:block;color:var(--navy);margin-bottom:3px}
+.note{margin:14px 0;padding:12px 15px;background:var(--mint);border-left:4px solid var(--teal);border-radius:4px;color:#164e48}
+.note.amber{background:var(--amber);border-color:var(--rust);color:#67361f}
+.scroll{overflow-x:auto;max-width:100%}.diagram{border-radius:8px;border:1px solid var(--line);background:#f5f8fc}
+.diagram svg{display:block;width:100%;min-width:980px;color:var(--ink)} .diagram svg text{fill:currentColor}
+.svg-head{font-size:34px;font-weight:700;color:#103658}.eyebrow-svg{font-size:15px;font-weight:700;color:#1d638b}.panel-title{font-size:19px;font-weight:700;color:#103658}.node{font-size:18px;font-weight:700}.model{font-size:14px;font-weight:700}.sub{font-size:16px;color:#49647b}.tech{font:13px Consolas,Menlo,monospace;color:#49647b}.ledger-head{font-size:17px;font-weight:700}
+figure{margin:14px 0 0}figcaption{margin-top:8px}
+table{border-collapse:collapse;width:100%;font-size:.94rem;line-height:1.57}caption{text-align:left;color:var(--muted);padding:0 0 7px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#eaf2f8;color:#173d57}tbody tr:nth-child(even){background:#f8fbfd}
+.midtable{min-width:540px}.cases{min-width:850px}.units{white-space:nowrap}
+code,pre,.math{font-family:ui-monospace,Consolas,"Noto Sans Thai",monospace}code{background:#edf3f7;border-radius:4px;padding:2px 4px;overflow-wrap:anywhere}pre{margin:8px 0 12px;max-width:100%;background:#f1f6fa;border:1px solid var(--line);border-radius:8px;padding:14px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.87rem;line-height:1.6}pre code{background:transparent;padding:0}
+.math{font-size:.95rem;line-height:1.8;background:#f5f9fc;padding:10px 13px;border-radius:6px;border-left:3px solid #7ba4bc;margin:8px 0 12px}
+details{border:1px solid var(--line);border-radius:8px;padding:10px 13px;margin:12px 0;background:#fafcfe}summary{font-weight:700;color:var(--navy);cursor:pointer}
+footer{font-size:.85rem;color:var(--muted);padding:0 0 30px}
+@media(max-width:650px){.shell{padding-inline:14px}.hero{padding-top:29px}.goals{grid-template-columns:1fr}.goal{padding:10px 12px}.nav{gap:6px}}
+@media print{body{background:white;font-size:10.5pt}.shell{max-width:none;padding:0}.hero{padding:8px 0 12px;background:white;color:var(--navy);border-color:var(--teal)}.hero .eyebrow,h1 span,.tags span{color:var(--navy)}h1{font-size:25pt}.nav,.screen-only{display:none}section{border:none;margin:0;padding:10px 0 0;break-inside:auto}h2,h3{break-after:avoid}tr,figure,.note,.goal{break-inside:avoid}th,td{padding:4px 5px}.scroll{overflow:visible}.scroll table,.diagram svg{min-width:0}table{font-size:9pt}details:not([open])>*:not(summary){display:block}a{color:inherit}}
+.diagram .sequence-svg{min-width:690px;font-family:"Noto Sans Thai",Tahoma,Arial,sans-serif}
+@media print{.diagram .sequence-svg{min-width:0}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="shell">
+<p class="eyebrow">ENG29 2121 · COMPUTER PROGRAMMING FOR ELECTRICAL ENGINEERS</p>
+<h1>Lab 03 · BJT DC Bias Web App<span>เพิ่มวงจรไบอัสและให้ AI ตรวจผลผ่านเบราว์เซอร์</span></h1>
+<p class="lead">ต่อยอดเว็บ Flask จาก Lab 2 ให้เลือกวงจรได้สามแบบ ใช้ Python คำนวณผลตามโหมด แล้วเปรียบเทียบผลบนหน้าเว็บกับค่าที่นักศึกษาคำนวณไว้ล่วงหน้า</p>
+<div class="tags"><span>ภาค 2/2569</span><span>วิศวกรรมไฟฟ้า ปี 2</span><span>ปฏิบัติการ 180 นาที</span><span>ฉบับร่างสำหรับผู้สอนตรวจ</span></div>
+</div></header>
+<main class="shell">
+<nav class="nav" aria-label="สารบัญ"><a href="#goal">เป้าหมาย</a><a href="#plan">แผนเวลา</a><a href="#model">วงจรและสมการ</a><a href="#build">ลงมือเขียนโปรแกรม</a><a href="#mcp">ตั้งค่า MCP</a><a href="#test">ตรวจผ่านเบราว์เซอร์</a><a href="#submit">ส่งงานและคะแนน</a></nav>
+<section id="goal">
+<p class="kicker">01 / Outcome</p><h2>หนึ่งเว็บ สามวงจรไบอัส</h2>
+<div class="goals">
+<div class="goal"><b>ตรวจสมการในฟังก์ชันที่ AI สร้าง</b>ให้ AI สร้างฟังก์ชันตามสมการที่เรียนใน Engineering Electronics แล้วตรวจ <code>dict</code> และหน่วยที่แต่ละฟังก์ชันส่งกลับ</div>
+<div class="goal"><b>เลือกตามโหมดและตรวจค่าที่กรอก</b>ใช้เงื่อนไขเลือกฟังก์ชัน รับเฉพาะข้อมูลที่วงจรต้องใช้ และแสดงข้อความเมื่อข้อมูลไม่ถูกต้อง</div>
+<div class="goal"><b>ตรวจผลจากหน้าเว็บจริง</b>อธิบายว่า MCP เชื่อม OpenCode กับเครื่องมือเบราว์เซอร์อย่างไร แล้วทวนผลที่ AI อ่านจากหน้าเว็บอย่างน้อยหนึ่งกรณี</div>
+</div>
+<p>ใช้โค้ดและฟอร์ม Lab 2 เป็นจุดเริ่มต้น ไม่ต้องทำเว็บใหม่ ฟอร์มเดิมคำนวณ <strong>Voltage Divider Bias</strong> ได้อยู่แล้ว งานสัปดาห์นี้คือเพิ่ม <strong>Fixed Bias</strong> และ <strong>Emitter Bias แบบแหล่งจ่ายเดียว</strong> โดยวงจรเดิมยังต้องให้ผลเดิมเมื่อกรอกค่าเดิม</p>
+<figure>
+<p class="small screen-only" id="diagram-hint">ถ้าหน้าจอแคบ ให้เลื่อนในกรอบไปทางขวาเพื่อดู Lab 3</p>
+<div class="scroll diagram" role="region" tabindex="0" aria-label="แผนภาพเปรียบเทียบ Lab 2 กับ Lab 3" aria-describedby="diagram-hint">
+<svg data-diagram="architecture-delta" viewBox="0 0 1280 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lab03-title lab03-desc">
+<title id="lab03-title">จากเว็บคำนวณวงจรเดียวสู่เว็บที่เลือกวงจรได้</title>
+<desc id="lab03-desc">Lab 2 ใช้ Flask คำนวณ Voltage Divider แบบเดียว ส่วน Lab 3 ใช้เว็บเดิม เพิ่มตัวเลือกวงจรเพื่อเรียกฟังก์ชัน Fixed Bias และ Emitter Bias โดยคงผลเดิมและชุดทดสอบเดิมไว้</desc>
+<defs><marker id="lab03-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="userSpaceOnUse"><polygon points="0,0 8,4 0,8" fill="#546d83"/></marker></defs>
+<rect width="1280" height="720" fill="#f5f8fc"/>
+<text x="32" y="44" class="eyebrow-svg">ENG29 2121 / LAB 03 · โครงสร้างเป้าหมาย</text>
+<text x="32" y="86" class="svg-head">หนึ่งเว็บ หลายวงจรไบอัส</text>
+<text x="32" y="128" class="panel-title">LAB 02 · วงจรเดียว</text>
+<text x="504" y="128" class="panel-title">สิ่งที่เปลี่ยน</text>
+<text x="808" y="128" class="panel-title">LAB 03 · เลือกวงจรได้</text>
+<g data-snapshot="before" data-grid="440 408 4" transform="translate(32 144)">
+<rect width="440" height="408" rx="8" fill="#f0f6fa" stroke="#d3e0ec"/>
+<path data-kind="relationship" data-object-id="form-submit" data-status="unchanged" data-signature="http:form-submit" data-from="ui" data-to="route" d="M220 96 V144" fill="none" stroke="#546d83" stroke-width="2" marker-end="url(#lab03-arrow)"/>
+<path data-kind="relationship" data-object-id="voltage-divider" data-status="unchanged" data-signature="dispatch:voltage-divider" data-from="route" data-to="divider" d="M122 212 V244 Q122 252 114 252 H84 Q76 252 76 260 V292" fill="none" stroke="#546d83" stroke-width="2" marker-end="url(#lab03-arrow)"/>
+<g data-kind="component" data-object-id="ui" data-status="unchanged" data-signature="jinja-form">
+<rect data-role="bounds" x="56" y="32" width="328" height="64" rx="6" fill="white" stroke="#9db5c6" stroke-width="1"/>
+
+<text x="220" y="59" text-anchor="middle" class="node">Flask / Jinja</text>
+<text x="220" y="80" text-anchor="middle" class="sub">ฟอร์มรับค่าและแสดงผล</text></g>
+<g data-kind="component" data-object-id="route" data-status="changed" data-signature="flask-route:voltage-divider">
+<rect data-role="bounds" x="24" y="144" width="392" height="68" rx="6" fill="white" stroke="#9db5c6" stroke-width="1"/>
+<text x="36" y="164" fill="#286454" class="tech">Δ</text>
+<text x="220" y="171" text-anchor="middle" class="node">app.py</text>
+<text x="220" y="192" text-anchor="middle" class="sub">ตรวจอินพุตและเรียกสมการชุดเดียว</text></g>
+<g data-kind="component" data-object-id="divider" data-status="unchanged" data-signature="forward-active:voltage-divider">
+<rect data-role="bounds" x="12" y="292" width="128" height="84" rx="6" fill="white" stroke="#9db5c6" stroke-width="1"/>
+
+<text x="76" y="328" text-anchor="middle" class="model">Voltage Divider</text>
+<text x="76" y="351" text-anchor="middle" class="tech">R1/R2/RC/RE</text></g>
+</g>
+<g data-snapshot="after" data-grid="440 408 4" transform="translate(808 144)">
+<rect width="440" height="408" rx="8" fill="#f0f6fa" stroke="#d3e0ec"/>
+<path data-kind="relationship" data-object-id="form-submit" data-status="unchanged" data-signature="http:form-submit" data-from="ui" data-to="route" d="M220 96 V144" fill="none" stroke="#546d83" stroke-width="2" marker-end="url(#lab03-arrow)"/>
+<path data-kind="relationship" data-object-id="voltage-divider" data-status="unchanged" data-signature="dispatch:voltage-divider" data-from="route" data-to="divider" d="M122 212 V244 Q122 252 114 252 H84 Q76 252 76 260 V292" fill="none" stroke="#546d83" stroke-width="2" marker-end="url(#lab03-arrow)"/>
+<path data-kind="relationship" data-object-id="fixed-bias" data-status="added" data-signature="dispatch:fixed" data-from="route" data-to="fixed" d="M220 212 V292" fill="none" stroke="#0c8078" stroke-width="2" marker-end="url(#lab03-arrow)"/>
+<path data-kind="relationship" data-object-id="emitter-bias" data-status="added" data-signature="dispatch:emitter-resistor" data-from="route" data-to="emitter" d="M318 212 V244 Q318 252 326 252 H356 Q364 252 364 260 V292" fill="none" stroke="#0c8078" stroke-width="2" marker-end="url(#lab03-arrow)"/>
+<g data-kind="component" data-object-id="ui" data-status="unchanged" data-signature="jinja-form">
+<rect data-role="bounds" x="56" y="32" width="328" height="64" rx="6" fill="white" stroke="#9db5c6" stroke-width="1"/>
+
+<text x="220" y="59" text-anchor="middle" class="node">Flask / Jinja</text>
+<text x="220" y="80" text-anchor="middle" class="sub">ฟอร์มรับค่าและแสดงผล</text></g>
+<g data-kind="component" data-object-id="route" data-status="changed" data-signature="flask-route:bias-selection">
+<rect data-role="bounds" x="24" y="144" width="392" height="68" rx="6" fill="#fff4e9" stroke="#b85c2c" stroke-width="2"/>
+<text x="36" y="164" fill="#99451c" class="tech">Δ</text>
+<text x="220" y="171" text-anchor="middle" class="node">app.py</text>
+<text x="220" y="192" text-anchor="middle" class="sub">ตรวจอินพุตและเลือกฟังก์ชันตามวงจร</text></g>
+<g data-kind="component" data-object-id="divider" data-status="unchanged" data-signature="forward-active:voltage-divider">
+<rect data-role="bounds" x="12" y="292" width="128" height="84" rx="6" fill="white" stroke="#9db5c6" stroke-width="1"/>
+
+<text x="76" y="328" text-anchor="middle" class="model">Voltage Divider</text>
+<text x="76" y="351" text-anchor="middle" class="tech">R1/R2/RC/RE</text></g>
+<g data-kind="component" data-object-id="fixed" data-status="added" data-signature="forward-active:fixed">
+<rect data-role="bounds" x="156" y="292" width="128" height="84" rx="6" fill="white" stroke="#9db5c6" stroke-width="1"/>
+<text x="168" y="312" fill="#286454" class="tech">+</text>
+<text x="220" y="328" text-anchor="middle" class="model">Fixed Bias</text>
+<text x="220" y="351" text-anchor="middle" class="tech">RB · RC</text></g>
+<g data-kind="component" data-object-id="emitter" data-status="added" data-signature="forward-active:emitter-resistor">
+<rect data-role="bounds" x="300" y="292" width="128" height="84" rx="6" fill="white" stroke="#9db5c6" stroke-width="1"/>
+<text x="312" y="312" fill="#286454" class="tech">+</text>
+<text x="364" y="328" text-anchor="middle" class="model">Emitter Bias</text>
+<text x="364" y="351" text-anchor="middle" class="tech">RB · RC · RE</text></g>
+</g>
+<path d="M504 160 H776 M504 260 H776 M504 360 H776 M504 460 H776" stroke="#d3e0ec" fill="none"/>
+<text x="504" y="192" data-change="CHANGED" data-target="route"><tspan class="ledger-head">CHANGED / เส้นทางคำนวณ</tspan><tspan x="504" dy="28" class="sub">ส่งค่าตามชนิดวงจรที่เลือก</tspan></text>
+<text x="504" y="292" data-change="ADDED" data-target="fixed"><tspan class="ledger-head">ADDED / Fixed Bias</tspan><tspan x="504" dy="28" class="sub">เพิ่มฟังก์ชันและกรณีอ้างอิง</tspan></text>
+<text x="504" y="392" data-change="ADDED" data-target="emitter"><tspan class="ledger-head">ADDED / Emitter Bias</tspan><tspan x="504" dy="28" class="sub">เพิ่มฟังก์ชันที่คิดผลของ RE</tspan></text>
+<text x="504" y="488" data-change="ADDED" data-target="fixed-bias" class="sub">ADDED / เลือกเส้นทาง Fixed</text>
+<text x="504" y="518" data-change="ADDED" data-target="emitter-bias" class="sub">ADDED / เลือกเส้นทาง Emitter</text>
+<rect x="32" y="576" width="1216" height="72" rx="6" fill="#e9f6f2" stroke="#b4d7cb"/>
+<text x="52" y="604" class="node">เกณฑ์สำคัญ</text><text x="52" y="629" class="sub">เลือก Voltage Divider ด้วยอินพุตเดิม → ได้ผลเดิม พร้อมทดสอบทั้งสองวงจรที่เพิ่มและการส่งค่าจากฟอร์ม</text>
+<line x1="32" y1="672" x2="1248" y2="672" stroke="#d3e0ec"/>
+<text x="32" y="698" class="sub">Δ ปรับส่วนเดิม</text><text x="210" y="698" class="sub">+ เพิ่มส่วนใหม่</text><text x="386" y="698" class="sub">กล่องไม่มีสัญลักษณ์ = ใช้ส่วนเดิม</text><text x="842" y="698" class="sub">Flask + Jinja + Python · แบบจำลอง DC โดยประมาณ</text>
+</svg>
+</div>
+<figcaption>แผนภาพโครงสร้างเป้าหมาย ไม่ใช่แบบหน้าจอที่ต้องทำตาม การเลือกวงจรอยู่ที่ฝั่ง Flask ส่วนสมการอยู่ในโมดูล Python</figcaption>
+</figure>
+<div class="note">ขอบเขตสัปดาห์นี้คือ DC Operating Point เท่านั้น ยังไม่ต้องใช้ SPICE วาด DC Load Line ทำ AC/Transient หรือจัดการตัวเก็บประจุ Bypass และไม่ต้องเขียน <code>unittest</code> หรือสคริปต์ Playwright</div>
+</section>
+<section id="plan">
+<p class="kicker">02 / Run of lab</p><h2>แผนปฏิบัติการ 3 ชั่วโมง</h2>
+<div class="scroll" role="region" tabindex="0" aria-label="ตารางแผนเวลา"><table class="midtable"><thead><tr><th scope="col">นาที</th><th scope="col">ทำอะไร</th><th scope="col">ผลที่ควรได้</th></tr></thead><tbody>
+<tr><td class="units">0–20</td><td>เปิดโปรเจกต์เดิม รัน Flask บันทึกผล Voltage Divider ก่อนแก้ และดูการสาธิตเชื่อม Playwright MCP สั้น ๆ</td><td>ค่าอ้างอิงเดิมพร้อมอินพุต</td></tr>
+<tr><td class="units">20–40</td><td>ทวนสมการจาก Engineering Electronics กำหนดค่าอ้างอิง และตรวจแผนแก้ไฟล์กับ AI</td><td>ตารางค่าคาดหมายและแผนสั้น</td></tr>
+<tr><td class="units">40–110</td><td>ให้ AI เพิ่มฟังก์ชัน เลือกโหมดใน Flask และปรับฟอร์ม แล้วตรวจสมการ หน่วย และโค้ดที่เปลี่ยน</td><td>คำนวณได้ครบสามวงจร</td></tr>
+<tr><td class="units">110–135</td><td>ยืนยันว่า AI ใช้ Playwright MCP เปิดเว็บได้ แล้วตรวจ A1–A5 หรือใช้วิธีสำรอง</td><td>ผลจริงและหลักฐานรายกรณี</td></tr>
+<tr><td class="units">135–160</td><td>ลองซ้ำเองอย่างน้อยหนึ่งกรณี ตรวจโค้ดที่เปลี่ยน และแก้สิ่งที่พบ</td><td>ผลตรวจซ้ำและคำอธิบายเส้นทางข้อมูล</td></tr>
+<tr><td class="units">160–180</td><td>อัปเดต README, Commit, Push และส่งหลักฐาน</td><td>GitHub URL, Commit SHA และตารางผล</td></tr>
+</tbody></table></div>
+<h3>ก่อนแก้โปรแกรม</h3>
+<p>เปิดโฟลเดอร์ Flask ของ Lab 2 ใน OpenCode Desktop ตรวจ <code>git status</code> และใช้ Python environment เดิม ถ้าแอปเริ่มจากไฟล์ <code>app.py</code> ตาม Lab 2 ให้รันคำสั่งต่อไปนี้จากโฟลเดอร์โปรเจกต์</p>
+<pre><code>git status
+python -m flask --app app run</code></pre>
+<p>เปิด URL ที่ Flask แสดง เช่น <code>http://127.0.0.1:5000/</code> แล้วกรอกกรณี A1 บันทึกอินพุต ผล และหน่วยก่อนแก้โค้ด ถ้ารันไม่ได้ให้ตรวจ environment, dependencies และวิธีรันใน README ของ Lab 2 ก่อน</p>
+</section>
+<section id="model">
+<p class="kicker">03 / Engineering model</p><h2>อินพุตและสมการที่ใช้</h2>
+<p>ทั้งสามวงจรเป็น NPN Common Emitter งานนี้ใช้แบบจำลอง DC ที่ประมาณว่า β และ V<sub>BE</sub> คงที่ในย่าน Forward Active ทุกโหมดรับ V<sub>CC</sub>, R<sub>C</sub>, β และ V<sub>BE</sub> เหมือนกัน</p>
+<div class="scroll" role="region" tabindex="0" aria-label="ตารางอินพุตเฉพาะวงจร"><table class="midtable"><thead><tr><th scope="col">โหมด</th><th scope="col">อินพุตเพิ่ม</th><th scope="col">ตำแหน่งตัวต้านทาน</th></tr></thead><tbody>
+<tr><th scope="row">Fixed Bias</th><td>R<sub>B</sub></td><td>R<sub>B</sub> ต่อจาก V<sub>CC</sub> ไป Base และ Emitter ต่อลงกราวด์โดยตรง</td></tr>
+<tr><th scope="row">Emitter Bias</th><td>R<sub>B</sub>, R<sub>E</sub></td><td>R<sub>B</sub> ต่อจาก V<sub>CC</sub> ไป Base และ R<sub>E</sub> ต่อจาก Emitter ลงกราวด์</td></tr>
+<tr><th scope="row">Voltage Divider Bias</th><td>R<sub>1</sub>, R<sub>2</sub>, R<sub>E</sub></td><td>R<sub>1</sub> ต่อจาก V<sub>CC</sub> ไป Base, R<sub>2</sub> ต่อจาก Base ลงกราวด์ และ R<sub>E</sub> ต่อจาก Emitter ลงกราวด์</td></tr>
+</tbody></table></div>
+<h3>หากระแสฐาน I<sub>B</sub> ตามวงจรที่เลือก</h3>
+<div class="math">
+<div><b>Fixed</b> · I<sub>B</sub> = (V<sub>CC</sub> − V<sub>BE</sub>) / R<sub>B</sub></div>
+<div><b>Emitter</b> · I<sub>B</sub> = (V<sub>CC</sub> − V<sub>BE</sub>) / [R<sub>B</sub> + (β + 1)R<sub>E</sub>]</div>
+<div><b>Divider</b> · I<sub>B</sub> = (V<sub>TH</sub> − V<sub>BE</sub>) / [R<sub>TH</sub> + (β + 1)R<sub>E</sub>]</div>
+<div>V<sub>TH</sub> = V<sub>CC</sub>R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>) และ R<sub>TH</sub> = R<sub>1</sub>R<sub>2</sub> / (R<sub>1</sub> + R<sub>2</sub>)</div>
+</div>
+<h3>หาค่าอื่นจาก I<sub>B</sub></h3>
+<div class="math">
+<div>I<sub>C</sub> = βI<sub>B</sub> &nbsp; และ &nbsp; I<sub>E</sub> = (β + 1)I<sub>B</sub></div>
+<div>V<sub>E</sub> = I<sub>E</sub>R<sub>E</sub> สำหรับ Emitter และ Divider &nbsp; ส่วน Fixed ใช้ V<sub>E</sub> = 0 V</div>
+<div>V<sub>B</sub> = V<sub>E</sub> + V<sub>BE</sub> &nbsp; · &nbsp; V<sub>C</sub> = V<sub>CC</sub> − I<sub>C</sub>R<sub>C</sub> &nbsp; · &nbsp; V<sub>CE</sub> = V<sub>C</sub> − V<sub>E</sub></div>
+</div>
+<p>คำนวณด้วย Ω และ A แล้วแสดง V<sub>B</sub>, V<sub>E</sub>, V<sub>C</sub>, V<sub>CE</sub> เป็น V และ I<sub>C</sub> เป็น mA ถ้าฟอร์มใช้ kΩ ให้แปลงเป็น Ω ที่จุดรับข้อมูลครั้งเดียว เช่น 1&nbsp;MΩ = 1,000&nbsp;kΩ = 1,000,000&nbsp;Ω</p>
+<div class="note amber"><strong>อย่าสับสนระหว่างอินพุตผิดกับแบบจำลองใช้ไม่ได้</strong> ถ้ากรอกค่าไม่ครบ ไม่ใช่ตัวเลข ไม่เป็นจำนวนจำกัด หรือค่าที่ต้องเป็นบวก ≤ 0 ให้แสดงข้อผิดพลาด ถ้าอินพุตถูกต้องแต่ I<sub>B</sub> ที่คำนวณได้ ≤ 0 หรือ V<sub>CE</sub> ≤ 0.2 V ให้เตือนว่าแบบจำลอง Forward Active อาจใช้ไม่ได้ ไม่ต้องหาค่าที่ถูกต้องใน Cutoff หรือ Saturation ใน Lab นี้</div>
+</section>
+<section id="build">
+<p class="kicker">04 / Build</p><h2>ให้ AI พัฒนาโค้ด แล้วตรวจสิ่งที่เปลี่ยน</h2>
+<ol>
+<li><strong>วางแผนก่อนแก้</strong> ใช้ OpenCode และ Superpowers จาก Lab 2 ให้ AI ชี้ไฟล์และฟังก์ชันเดิมที่ใช้ซ้ำ ตรวจแผนสั้น ๆ ก่อนอนุญาตให้แก้ ห้ามย้ายสมการไปไว้ใน HTML หรือสร้างระบบใหม่ทั้งโปรเจกต์</li>
+<li><strong>โมดูลคำนวณ</strong> ใน <code>dc_bias.py</code> หรือไฟล์ที่ทำหน้าที่เดียวกัน ให้ AI เขียนฟังก์ชัน Fixed และ Emitter แยกกันตามสมการในใบงาน และเก็บวิธีคำนวณ Divider เดิม นักศึกษาใช้ความรู้จาก Engineering Electronics ตรวจสมการในโค้ด หน่วย และสัญญาณเตือนเมื่อใช้แบบจำลองไม่ได้ โดยไม่ต้องเขียนหรือเติมฟังก์ชันเอง</li>
+<li><strong>ผลลัพธ์แบบเดียวกัน</strong> ให้ Flask กับทั้งสามฟังก์ชันตกลงชื่อคีย์และหน่วยร่วมกัน เช่น <code>vb_v</code>, <code>ve_v</code>, <code>vc_v</code>, <code>vce_v</code>, <code>ic_ma</code> และข้อความเตือนถ้ามี ถ้า Lab 2 ใช้ชื่อคีย์อื่นอยู่แล้ว สามารถใช้ชื่อนั้นต่อได้</li>
+<li><strong>เลือกฟังก์ชันและตรวจอินพุต</strong> ใน <code>app.py</code> ใช้ <code>if</code> / <code>elif</code> เลือกโมเดลตามค่าที่ส่งจากฟอร์ม แปลงหน่วยและตรวจเฉพาะช่องที่จำเป็นของโหมดนั้น โหมดที่ไม่รู้จักต้องแจ้งข้อผิดพลาด ไม่เดาเป็น Divider</li>
+<li><strong>ฟอร์มและผลลัพธ์</strong> ใน <code>templates/index.html</code> ให้เลือกโหมดและเห็นช่องที่ใช้เท่านั้น หรือทำให้ช่องที่ไม่เกี่ยวข้องใช้งานไม่ได้ ทำแบบเลือกโหมดแล้วโหลดฟอร์มใหม่ได้ ไม่จำเป็นต้องเพิ่ม JavaScript ให้ผลลัพธ์และข้อผิดพลาดระบุโหมดที่เลือก และอย่าให้ผลรอบก่อนดูเหมือนผลของข้อมูลที่เพิ่งกรอกผิด</li>
+</ol>
+<h3>ตัวอย่างคำสั่งเริ่มงานกับ OpenCode</h3>
+<pre><code>ใช้ Superpowers ช่วยอ่านโครง Flask จาก Lab 2 และเสนอแผนสั้น ๆ สำหรับ
+เพิ่ม Fixed Bias และ Emitter Bias แบบแหล่งจ่ายเดียว โดยผล Divider เดิมต้องคงเดิม
+แยกสมการไว้ใน Python ส่งผลเป็น dict ที่มีชื่อคีย์และหน่วยตรงกัน
+ใช้เงื่อนไขเลือกฟังก์ชันและตรวจอินพุตตามโหมด
+เสนอไฟล์ที่จะเปลี่ยนแล้วรอให้ผมตรวจแผน เมื่อยืนยันแล้วให้เขียนโค้ดตามสมการในใบงาน
+สรุปว่าแต่ละฟังก์ชันใช้สูตรอะไร แปลงหน่วยตรงไหน และส่งผลลัพธ์อะไรให้ผมตรวจ
+เก็บ tests เดิมไว้ แต่ไม่ต้องสร้าง unittest ใหม่ งานนี้ตรวจผ่าน Browser โดยใช้ตารางของผม</code></pre>
+</section>
+<section id="mcp">
+<p class="kicker">05 / Connect the browser</p><h2>MCP คืออะไร และต่อ Playwright กับ OpenCode อย่างไร</h2>
+<p><strong>MCP (Model Context Protocol)</strong> คือมาตรฐานที่ให้แอป AI รู้ว่ามีเครื่องมืออะไร เรียกใช้เครื่องมือนั้น และรับผลกลับมา ใน Lab นี้ <strong>OpenCode</strong> เป็นแอปที่เอเจนต์ทำงานและมี MCP Client ส่วน <strong>Playwright MCP</strong> เป็น MCP Server ที่เปิดเครื่องมือควบคุมเบราว์เซอร์ให้เอเจนต์ใช้</p>
+<figure>
+<p class="small screen-only" id="mcp-scroll-hint">ถ้าหน้าจอแคบ ให้เลื่อนกรอบไปทางขวาเพื่อดู Browser และ Flask</p>
+<div class="scroll diagram" role="region" tabindex="0" aria-label="แผนภาพลำดับการตรวจเว็บผ่าน Playwright MCP" aria-describedby="mcp-scroll-hint">
+<svg class="sequence-svg" data-diagram="sequence" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 494" role="img" aria-labelledby="mcp-fig-title mcp-fig-desc">
+<title id="mcp-fig-title">จากคำสั่ง OpenCode ถึงผลบนหน้าเว็บ</title>
+<desc id="mcp-fig-desc">OpenCode เรียกเครื่องมือผ่าน MCP ไปยัง Playwright MCP Server ซึ่งควบคุมเบราว์เซอร์ เบราว์เซอร์เป็นฝั่งที่ส่งคำขอ HTTP ไป Flask แล้วแสดงผลลัพธ์ Playwright ส่งข้อมูลจากหน้าเว็บกลับ OpenCode เพื่อเทียบกับค่าคาดหมายของนักศึกษา</desc>
+<defs>
+<marker id="mcp-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto" fill="#3e6c87"><path d="M0 0 L10 5 L0 10 Z"/></marker>
+<marker id="mcp-return-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto" fill="#07766e"><path d="M0 0 L10 5 L0 10 Z"/></marker>
+</defs>
+<rect width="1000" height="494" rx="12" fill="#f5f8fc"/>
+<text x="30" y="31" font-size="14" font-weight="700" fill="#07766e">LAB 03 / หนึ่งรอบของการทดสอบเว็บ</text>
+<g fill="#fff" stroke="#9db5c6">
+<rect x="27" y="46" width="190" height="62" rx="7"/>
+<rect x="277" y="46" width="190" height="62" rx="7" fill="#fff4e9" stroke="#b85c2c" stroke-width="2"/>
+<rect x="527" y="46" width="190" height="62" rx="7"/>
+<rect x="777" y="46" width="190" height="62" rx="7"/>
+</g>
+<g text-anchor="middle" fill="#103658" font-size="18" font-weight="700">
+<text x="122" y="72">OpenCode</text><text x="372" y="72">Playwright MCP</text>
+<text x="622" y="72">Browser</text><text x="872" y="72">Flask + Python</text>
+</g>
+<g text-anchor="middle" fill="#415e71" font-size="14">
+<text x="122" y="94">Host / MCP Client</text><text x="372" y="94">MCP Server</text>
+<text x="622" y="94">แสดงฟอร์มและผล</text><text x="872" y="94">Web Server / คำนวณ</text>
+</g>
+<g stroke="#9db5c6" stroke-dasharray="5 6">
+<path d="M122 108 V427 M372 108 V427 M622 108 V427 M872 108 V427"/>
+</g>
+<g stroke="#3e6c87" stroke-width="2.2" fill="none" marker-end="url(#mcp-arrow)">
+<path d="M122 156 H372"/><path d="M372 203 H622"/><path d="M622 250 H872"/>
+</g>
+<g stroke="#07766e" stroke-width="2.2" fill="none" stroke-dasharray="6 4" marker-end="url(#mcp-return-arrow)">
+<path d="M872 297 H622"/><path d="M622 344 H372"/><path d="M372 391 H122"/>
+</g>
+<g text-anchor="middle" fill="#17344b" font-size="16">
+<text x="247" y="146">MCP · เรียกเครื่องมือ</text>
+<text x="497" y="193">เปิดเว็บ · กรอก · คลิก</text>
+<text x="747" y="240">HTTP · โหลดหน้า / ส่งฟอร์ม</text>
+<text x="747" y="287">HTTP · หน้าเว็บผลคำนวณ</text>
+<text x="497" y="334">อ่านสถานะของหน้าเว็บ</text>
+<text x="247" y="381">MCP · ส่ง Snapshot กลับ</text>
+</g>
+<rect x="28" y="437" width="944" height="40" rx="6" fill="#e8f6f2" stroke="#b4d7cb"/>
+<text x="47" y="462" font-size="15" fill="#164e48" font-weight="700">นักศึกษาให้ค่าคาดหมาย → OpenCode เทียบกับผลที่อ่านได้ → นักศึกษาทวนหลักฐานและตัดสินผล</text>
+</svg>
+</div>
+<figcaption>เส้นทึบคือคำสั่งหรือคำขอ เส้นประคือผลที่ส่งกลับ เบราว์เซอร์คุยกับ Flask ผ่าน HTTP ส่วน OpenCode คุยกับ Playwright ผ่าน MCP ทั้งสองเส้นทางทำหน้าที่ต่างกัน</figcaption>
+</figure>
+<div class="goals">
+<div class="goal"><b>Skill บอกขั้นตอน</b><code>browser-acceptance-check</code> กำหนดให้ตรวจกรณีไหนและรายงานหลักฐานอะไร ไม่ได้เปิดเว็บเอง</div>
+<div class="goal"><b>MCP ทำให้เรียกเครื่องมือได้</b>OpenCode ส่งคำสั่งให้ Playwright MCP เช่น เปิด URL กรอกฟอร์ม หรืออ่านหน้าเว็บ</div>
+<div class="goal"><b>Flask ยังทำงานเหมือนเดิม</b>เบราว์เซอร์ส่งฟอร์มตามปกติ Flask รับค่าและเรียกฟังก์ชัน Python ไม่ต้องลง Playwright ใน <code>requirements.txt</code></div>
+</div>
+<h3>1. เตรียมเครื่อง</h3>
+<p>ใช้ <strong>Playwright MCP เป็นเส้นทางหลักสำหรับฝึก MCP</strong> ก่อนคาบให้ผู้สอนลองบนเครื่องสอนหนึ่งรอบ เปิดโปรเจกต์ Flask เดิมใน OpenCode Desktop ตรวจรุ่นจาก About/Settings และตรวจว่ามี Google Chrome กับ Node.js รุ่น LTS ที่ยังได้รับการสนับสนุน เอกสาร Playwright MCP ระบุ Node.js 18 ขึ้นไป คำสั่งด้านล่างใช้ตรวจว่า Terminal เรียก Node และ npx ได้</p>
+<pre><code>node --version
+npx --version</code></pre>
+<p class="small">ถ้าเพิ่งติดตั้ง Node ให้ปิด–เปิด OpenCode ใหม่เพื่อรับ PATH ที่อัปเดต การเรียกแพ็กเกจครั้งแรกต้องเข้าถึง npm ได้ เครื่องสอนหรือเครื่องห้อง Lab ที่จำกัดการติดตั้งควรเตรียมล่วงหน้า</p>
+<h3>2. เพิ่ม MCP ในโปรเจกต์</h3>
+<p>เปิด <code>opencode.json</code> หรือ <code>opencode.jsonc</code> ที่รากโปรเจกต์ Flask ถ้ายังไม่มีให้สร้าง <code>opencode.json</code> เลือกตัวอย่างตามรุ่นเพียงแบบเดียว ถ้าไฟล์เดิมมี Model, Provider, Plugin หรือ MCP ตัวอื่น ให้รวมเฉพาะรายการ <code>playwright</code> เข้ากับโครงเดิม ไม่วางทับทั้งไฟล์</p>
+<details open><summary>OpenCode V2 · วาง Playwright ใต้ <code>mcp.servers</code></summary>
+<pre id="mcp-v2-config"><code>{
+  "mcp": {
+    "servers": {
+      "playwright": {
+        "type": "local",
+        "command": ["npx", "-y", "@playwright/mcp@latest", "--browser", "chrome", "--isolated"]
+      }
+    }
+  }
+}</code></pre>
+</details>
+<details><summary>OpenCode V1 · วาง Playwright ใต้ <code>mcp</code> โดยตรง</summary>
+<pre id="mcp-v1-config"><code>{
+  "mcp": {
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest", "--browser", "chrome", "--isolated"],
+      "enabled": true
+    }
+  }
+}</code></pre>
+</details>
+<p><code>type: local</code> ให้ OpenCode เริ่ม MCP Server เป็นโปรเซสในเครื่องและสื่อสารผ่าน <code>stdio</code> ไม่ต้องเปิด URL หรือพอร์ตของ MCP เอง พอร์ต <code>5000</code> เป็นของ Flask <code>--isolated</code> ใช้โปรไฟล์ทดสอบแยกไว้ในหน่วยความจำ ไม่ใช้เซสชัน Chrome ส่วนตัว ตัวอย่างใช้หน้าต่าง Chrome ที่มองเห็นได้ ถ้าต้องการรันโดยไม่แสดงหน้าต่างให้เติม <code>"--headless"</code> ในอาร์เรย์ <code>command</code> เบราว์เซอร์ยังรันจริงในทั้งสองแบบ</p>
+<h3>3. ยืนยันทีละชั้นก่อนตรวจ A1–A5</h3>
+<ol>
+<li><strong>Flask พร้อม</strong> ให้ Terminal ที่รัน Flask เปิดค้างไว้ แล้วลองเปิด URL ที่ Flask แสดงด้วยตนเอง ถ้าใช้พอร์ตอื่น ให้ใช้ URL นั้นในทุกคำสั่ง เบราว์เซอร์ที่ MCP เปิดต้องเข้าถึง Flask ได้ โดยเฉพาะเมื่อ OpenCode ทำงานผ่าน WSL, SSH หรือ container</li>
+<li><strong>MCP เชื่อมต่อ</strong> ปิด–เปิด OpenCode Desktop แล้วเข้าโปรเจกต์เดิม ดูรายการ MCP ในแอป หรือใช้ <code>/mcps</code> ใน OpenCode V2 ที่รองรับ หากมี CLI ให้เปิด Terminal ที่รากโปรเจกต์แล้วรัน <code>opencode mcp list</code> ตรวจว่า <code>playwright</code> แสดงสถานะเชื่อมต่อ ไม่ต้องใช้ CLI ถ้าได้ติดตั้งเฉพาะ Desktop</li>
+<li><strong>เอเจนต์ใช้เบราว์เซอร์ได้จริง</strong> ให้เอเจนต์ทำตามคำสั่งด้านล่าง ตรวจว่ามีการเรียก Browser Tool และผลที่ตอบอ้างอิงหัวข้อกับช่องที่พบจากหน้าเว็บ สถานะ <code>connected</code> เพียงอย่างเดียวยังไม่ยืนยันว่า Chrome เปิดได้หรือเข้าถึง Flask ได้</li>
+</ol>
+<pre><code>ใช้ Playwright MCP เปิด http://127.0.0.1:5000/ แล้วอ่าน browser_snapshot
+บอกชื่อหน้าที่เห็นและชื่อช่องอินพุตจริงอย่างน้อย 2 ช่อง พร้อมระบุเครื่องมือที่ใช้
+ถ้าเปิดไม่ได้ ให้รายงานข้อผิดพลาดที่เครื่องมือคืนมา อย่าอ่านโค้ดหรือใช้ curl แทน</code></pre>
+<details><summary>ถ้าพบปัญหาระหว่างเริ่มใช้งาน</summary>
+<div class="scroll" role="region" tabindex="0" aria-label="ตารางแก้ปัญหา Playwright MCP"><table class="midtable"><thead><tr><th scope="col">อาการ</th><th scope="col">ตรวจจุดไหนก่อน</th></tr></thead><tbody>
+<tr><th scope="row">ไม่เห็น Playwright หรือ MCP ต่อไม่ได้</th><td>ตรวจ V1/V2, ตำแหน่งไฟล์และวงเล็บ JSON ตรวจ <code>npx --version</code> และว่าเครือข่ายเข้าถึง npm ได้ จากนั้นเปิดแอปใหม่</td></tr>
+<tr><th scope="row">MCP ต่อได้ แต่เปิด Chrome ไม่ได้</th><td>อ่านข้อความจริงจากเครื่องมือ ตรวจว่า Chrome ติดตั้งใน environment ที่รัน OpenCode ถ้าเครื่องมี Edge ที่รองรับอยู่แล้ว ให้ลองเปลี่ยน <code>chrome</code> เป็น <code>msedge</code></td></tr>
+<tr><th scope="row">เปิดเบราว์เซอร์ได้ แต่เปิดเว็บไม่ได้</th><td>ตรวจว่า Flask ยังรันอยู่และ URL/พอร์ตถูกต้อง ถ้า Browser กับ Flask อยู่ต่าง environment ให้ตรวจว่า Browser เข้าถึง URL ของ Flask ได้</td></tr>
+<tr><th scope="row">เปิดเว็บได้ แต่ AI หาอินพุตหรือปุ่มไม่เจอ</th><td>ให้ขอ Snapshot ใหม่หลังเปลี่ยนโหมด ตรวจ <code>&lt;label for="..."&gt;</code> ว่าตรงกับ <code>id</code> ของช่อง และให้ปุ่มมีข้อความชัดเจน</td></tr>
+</tbody></table></div>
+</details>
+<div class="note">ถ้าเครื่องของกลุ่มใช้ Playwright MCP ไม่ได้ภายในช่วงทดสอบ ให้บันทึก Playwright MCP เป็น <code>NOT RUN</code> พร้อมเหตุผล แล้วใช้ Browser Tool ที่มีใน OpenCode Desktop รุ่นที่รองรับ หรือทดสอบด้วยมือทันที ใช้กรณี A1–A5 และเกณฑ์ให้คะแนนเดียวกัน แต่ระบุวิธีจริงว่าเป็น Playwright MCP, OpenCode Browser หรือ Manual</div>
+</section>
+<section id="test">
+<p class="kicker">06 / Browser acceptance</p><h2>ให้ AI ทดสอบ Browser ด้วยตารางของนักศึกษา</h2>
+<p><strong>ก่อนให้ AI รัน</strong> ให้ใช้สมการจาก Engineering Electronics คำนวณค่าอ้างอิง I<sub>C</sub> และ V<sub>CE</sub> ของโหมดใหม่อย่างน้อยหนึ่งกรณีและระบุหน่วย ใช้เครื่องคิดเลขหรือตารางคำนวณช่วยได้ แล้วเติมค่าคาดหมายที่ตารางระบุให้ครบ ค่าอ้างอิงต้องเป็นอิสระจากโปรแกรมที่กำลังตรวจ</p>
+<p><strong>ใช้ร่วมกันใน A1–A5</strong> V<sub>CC</sub> = 12 V, R<sub>C</sub> = 2.2 kΩ, β = 100 และ V<sub>BE</sub> = 0.70 V ป้อนค่าตามหน่วยบนฟอร์ม หากแสดงผลตั้งแต่สองตำแหน่งทศนิยม ให้ใช้เกณฑ์ผลต่างไม่เกิน 0.01 mA สำหรับ I<sub>C</sub> และ 0.02 V สำหรับ V<sub>CE</sub> โดยเปรียบเทียบกับค่าอ้างอิงที่ยังไม่ปัดเศษ ถ้าฟอร์มเดิมปัดหยาบกว่า ให้ระบุความละเอียดที่ใช้และตกลงเกณฑ์กับ TA ก่อนรัน</p>
+<div class="scroll" role="region" tabindex="0" aria-label="ตารางบันทึกการทดสอบเบราว์เซอร์"><table class="cases"><caption>คัดลอกตารางไปที่ <code>docs/validation.md</code> หรือรูปแบบที่ผู้สอนกำหนด แล้วกรอกผลที่เห็นจริงพร้อมหน่วย ระบุวิธีจริงเป็น Playwright MCP, OpenCode Browser หรือ Manual</caption>
+<thead><tr><th scope="col">กรณี</th><th scope="col">เลือกโหมดและกรอกค่า</th><th scope="col">คาดหมายก่อนรัน</th><th scope="col">เห็นจริง</th><th scope="col">วิธีตรวจ</th><th scope="col">สถานะ</th></tr></thead><tbody>
+<tr><th scope="row">A1 · โหมดเดิม</th><td>Divider · R<sub>1</sub> = 100 kΩ, R<sub>2</sub> = 22 kΩ, R<sub>E</sub> = 1 kΩ</td><td>ผลต้องตรงกับเมื่อรัน Lab 2 ก่อนแก้ และเทียบได้กับค่าอ้างอิงเดิม<br>I<sub>C</sub> ___ mA · V<sub>CE</sub> ___ V</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><th scope="row">A2 · Fixed</th><td>Fixed · R<sub>B</sub> = 1 MΩ</td><td>คำนวณได้โดยไม่ต้องกรอก R<sub>E</sub><br>I<sub>C</sub> ___ mA · V<sub>CE</sub> ___ V</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><th scope="row">A3 · Emitter</th><td>Emitter · R<sub>B</sub> = 1 MΩ, R<sub>E</sub> = 1 kΩ</td><td>มีช่องและใช้ค่า R<sub>E</sub><br>I<sub>C</sub> ___ mA · V<sub>CE</sub> ___ V</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><th scope="row">A4 · เปลี่ยนค่าเดียว</th><td>Emitter · เหมือน A3 แต่เปลี่ยน R<sub>E</sub> เป็น 2 kΩ</td><td>ทำนายก่อนรันว่า I<sub>C</sub> จะเพิ่มหรือลดจาก A3 พร้อมเหตุผลสั้น ๆ แล้วบันทึกผลจริง</td><td>—</td><td>—</td><td>—</td></tr>
+<tr><th scope="row">A5 · อินพุตผิด</th><td>Fixed · R<sub>B</sub> = 0</td><td>มีข้อความให้แก้ R<sub>B</sub> เว็บไม่ล่ม และไม่แสดงผลเดิมเป็นผลของรอบนี้</td><td>—</td><td>—</td><td>—</td></tr>
+</tbody></table></div>
+<p class="small">A1 ถ้า Lab 2 เดิมไม่ตรงกับค่าอ้างอิง ให้บันทึกความต่างและปรึกษา TA ก่อนแก้ ไม่ถือว่าผ่านเพียงเพราะยังได้ค่าผิดเท่าเดิม ส่วน A5 ใช้ข้อความที่ฟอร์มแจ้งหรือข้อความจาก Flask ก็ได้ และยังต้องมีการตรวจอินพุตใน Flask ด้วย</p>
+<h3>รอบตรวจ A1–A5 ทำอย่างไร</h3>
+<ol>
+<li><strong>กำหนดผลที่จะใช้ตัดสิน</strong> ส่ง URL และตาราง A1–A5 ที่มีค่าคาดหมายกับหน่วยให้ AI ใช้ค่าจากการตรวจสอบของกลุ่ม ไม่ให้ AI สร้างคำตอบอ้างอิงจากโปรแกรมที่กำลังทดสอบ</li>
+<li><strong>เปิดหน้าเว็บและอ่านช่องในฟอร์ม</strong> เริ่มด้วย <code>browser_navigate</code> และ <code>browser_snapshot</code> Snapshot คือข้อความโครงสร้างของหน้าเว็บ เช่น ชื่อปุ่ม ชื่อช่อง และผลที่อ่านได้ ส่วน Screenshot คือรูปหน้าจอสำหรับเก็บหลักฐาน</li>
+<li><strong>เลือกวงจรและส่งค่าผ่านฟอร์มจริง</strong> ใช้ <code>browser_select_option</code> กับเมนู Dropdown หรือ <code>browser_click</code> ถ้า UI ใช้ปุ่ม ถ้าสลับโหมดแล้วฟอร์มเปลี่ยน ให้อ่าน Snapshot ใหม่ กรอกข้อมูลด้วย <code>browser_fill_form</code> หรือ <code>browser_type</code> ตามหน่วยบนฟอร์ม แล้วคลิกปุ่มคำนวณ</li>
+<li><strong>อ่านผลที่เพิ่งแสดง</strong> อ่าน Snapshot หลังส่งฟอร์ม ตรวจว่าโหมดและค่าผลลัพธ์เป็นของกรณีนี้ ไม่ใช่ผลของรอบก่อน เปรียบเทียบตัวเลขและหน่วยตามเกณฑ์ สำหรับ A5 ให้บันทึกข้อความที่แจ้งจริง และระบุว่ามาจากฟอร์มหรือ Flask หากแยกได้ การที่ฟอร์มไม่ยอมส่งยังไม่พิสูจน์ว่า Flask ตรวจค่าแล้ว</li>
+<li><strong>รายงานก่อนแก้ แล้วค่อยรันซ้ำ</strong> ใช้ <code>PASS</code> เมื่อผลที่เห็นตรงเกณฑ์ <code>FAIL</code> เมื่อได้รันแล้วแต่ผลไม่ตรง และ <code>NOT RUN</code> เมื่อเครื่องมือไม่พร้อม เปิดเว็บไม่ได้ หรือรันไม่ครบจนตรวจผลไม่ได้ แนบข้อความจากหน้าเว็บหรือ <code>browser_take_screenshot</code> อย่างน้อยหนึ่งกรณี ถ้าแก้โค้ดให้บันทึกผลก่อน–หลังและรันกรณีที่ได้รับผลกระทบซ้ำ</li>
+</ol>
+<div class="note"><strong>ดู A3 → A4 ให้ชัด</strong> ก่อนกรอก A4 ยืนยันว่าโหมดยังเป็น Emitter และคง V<sub>CC</sub>, R<sub>B</sub>, R<sub>C</sub>, β, V<sub>BE</sub> เท่าเดิม เปลี่ยนเฉพาะ R<sub>E</sub> จาก 1 เป็น 2 kΩ แล้วคลิกคำนวณใหม่ เก็บ I<sub>C</sub> จากทั้งสองรอบเพื่อเทียบกับทิศทางที่กลุ่มทำนาย หากค่าไม่เปลี่ยน ให้ดูหลักฐานว่าเปลี่ยนช่องถูกและเกิดการส่งฟอร์มจริงหรือไม่ก่อนแก้สมการ</div>
+<h3>Prompt สำหรับรอบตรวจจริง</h3>
+<pre><code>ใช้ Playwright MCP ตรวจเว็บ Flask ของกลุ่มที่ http://127.0.0.1:5000/
+ถ้ามี browser-acceptance-check ให้โหลดก่อน แล้วใช้ตาราง A1–A5 ที่แนบ
+เปิดเว็บ อ่าน Snapshot เลือกโหมด กรอกค่าตามหน่วยบนฟอร์ม แล้วกดคำนวณจริง
+หลังเปลี่ยนโหมดหรือส่งฟอร์มให้อ่านหน้าที่เปลี่ยนไป อย่าใช้ผลรอบก่อนแทน
+เทียบกับค่าคาดหมายและ tolerance ของกลุ่ม ห้ามใช้ค่าจากโค้ดเป็นคำตอบอ้างอิง
+รายงาน ID | วิธีตรวจ | อินพุต | ค่าคาดหมาย | ผลที่เห็นพร้อมหน่วย | สถานะ | หลักฐาน
+ถ้าไม่ได้รันผ่าน Browser ให้บอกเหตุผลและรายงาน NOT RUN อย่าใช้ curl หรืออ่านโค้ดแทน
+อย่าแก้ไฟล์โปรแกรมก่อนส่งรายงานรอบแรก</code></pre>
+<p class="small">ถ้าใช้ OpenCode Browser แทน ให้เปลี่ยนชื่อเครื่องมือใน Prompt หากใช้ Manual ให้กรอกตารางด้วยผลที่กลุ่มเห็นจริง ไม่ต้องให้ AI แต่งหลักฐานแทน</p>
+<details><summary>แม่แบบ Skill ของโปรเจกต์ สำหรับผู้สอนหรือกลุ่มที่พร้อมใช้งาน</summary>
+<p>ผู้สอนอาจแนบข้อความด้านล่างใน starter ของโปรเจกต์ที่เส้นทาง <code>.opencode/skills/browser-acceptance-check/SKILL.md</code> หรือให้นักศึกษาใช้คำสั่งรอบตรวจด้านบนได้ทันที ตัวแม่แบบเป็นคำสั่งให้ AI ไม่ได้ติดตั้งหรือเปิดสิทธิ์ให้ใช้ Browser เอง</p>
+<pre id="skill-template"><code>---
+name: browser-acceptance-check
+description: Check a running local BJT bias web app in a real browser using student-provided acceptance cases and expected results.
+---
+
+1. Get the running local URL and the student's A1–A5 case table.
+   Ask for any missing inputs or expected results before judging a case.
+2. Prefer Playwright MCP if connected. Use an available browser tool to
+   navigate to the local URL, and name the tool actually used. For each case,
+   select the mode, fill the relevant fields and submit. Read the actual
+   values, units, visible field states or validation message from the page.
+3. Compare observations against the student's expectations and tolerance.
+   Report case ID, method, expected result, observed result and PASS or FAIL.
+   Mark any unexecuted or unobservable case NOT RUN and explain the blocker.
+4. Report evidence from the browser, such as visible result text or a
+   screenshot if available. Reading source code or sending an HTTP request
+   does not count as running a browser case. Do not edit source files while
+   checking. Ask before moving from reporting to fixing.</code></pre>
+<p class="small">ให้ผู้สอนลองให้เอเจนต์เปิดเว็บแล้วกรอกหนึ่งกรณีบนเครื่องสอนล่วงหน้า ถ้าแม่แบบไม่ถูกโหลด ให้คัดลอกคำสั่งรอบตรวจไปใช้โดยตรง ยังไม่ต้องเตรียมโค้ดที่จงใจทำผิด</p>
+</details>
+<h3>ทวนผลและไล่ข้อมูลหนึ่งรอบ</h3>
+<p>นักศึกษาเปิดเว็บเองแล้วทำซ้ำอย่างน้อยหนึ่งกรณี ถ้าผลไม่ตรง ให้ไล่ดูค่าที่กรอก → ชื่อฟิลด์ที่ Flask รับ → การแปลงหน่วย → ฟังก์ชันที่ถูกเรียก → ค่าที่แสดง แก้ทีละจุดแล้วรันกรณีที่เกี่ยวข้องซ้ำ ถ้าทุกกรณีผ่าน ให้อธิบายด้วยโค้ดว่าค่า R<sub>E</sub> ใน A4 เดินทางถึงสมการได้อย่างไร ไม่ต้องสร้างบั๊กเพื่อให้มีอะไรแก้</p>
+</section>
+<section id="submit">
+<p class="kicker">07 / Deliverables &amp; grading</p><h2>สิ่งที่ส่งและเกณฑ์ตรวจงาน</h2>
+<ul>
+<li>ลิงก์ GitHub และ Commit SHA ของงาน Lab 3 พร้อม README ที่บอกวิธีรันและเปิดเว็บ</li>
+<li>ตาราง A1–A5 พร้อมอินพุต ค่าคาดหมาย ผลจริง หน่วย วิธีตรวจ และสถานะ แนบหลักฐานจากหน้าเว็บอย่างน้อยหนึ่งกรณี เช่น ข้อความผลที่คัดมาหรือภาพหน้าจอ ถ้าต้องเปลี่ยนเครื่องมือ ให้ระบุสาเหตุและวิธีที่ใช้แทน</li>
+<li>ค่าอ้างอิงอิสระอย่างน้อยหนึ่งกรณีของโหมดใหม่ พร้อมสมการและหน่วย ระบุว่า AI สร้างโค้ดส่วนไหน นักศึกษาตรวจอะไร และโค้ดเลือกฟังก์ชันกับแปลงหน่วยที่ไหน</li>
+</ul>
+<p>ก่อน Commit ให้เปิด <code>git diff</code> และตรวจรายการไฟล์ที่ Stage แล้วด้วย <code>git diff --staged</code> ไม่ส่ง <code>.venv</code>, <code>.env</code> หรือ credentials จากนั้น Commit และ Push ตามวิธีที่ฝึกใน Lab 1–2</p>
+<div class="scroll" role="region" tabindex="0" aria-label="ตารางเกณฑ์ให้คะแนน"><table class="midtable"><thead><tr><th scope="col">เกณฑ์</th><th scope="col">คะแนน</th><th scope="col">หลักฐานที่ใช้ตรวจ</th></tr></thead><tbody>
+<tr><th scope="row">โครงสร้างและ Python</th><td>3</td><td>แยกฟังก์ชันใหม่ เลือกตามโหมด ส่งผลด้วย <code>dict</code> และอธิบายการตรวจสมการกับโค้ดที่ AI สร้าง</td></tr>
+<tr><th scope="row">วิศวกรรมและการคงผลเดิม</th><td>3</td><td>ทั้งสามโหมดคำนวณถูก หน่วยชัดเจน มีค่าอ้างอิงอิสระ และ Divider ไม่เสียจากการเปลี่ยนแปลง</td></tr>
+<tr><th scope="row">ตรวจฟอร์มและผลจาก Browser</th><td>3</td><td>ตาราง A1–A5 อ้างอิงผลที่เห็นจริง ตรวจอินพุตผิดได้ และนักศึกษาทวนเองอย่างน้อยหนึ่งกรณี อธิบายบทบาท MCP ได้ ให้คะแนนการตรวจผลเท่ากันทุกวิธี</td></tr>
+<tr><th scope="row">ส่งงานและทำซ้ำได้</th><td>1</td><td>README มีวิธีรัน มี GitHub URL และ Commit SHA พร้อมระบุส่วนที่ AI ช่วย</td></tr>
+</tbody></table></div>
+<div class="note"><strong>คำถามปิด Lab</strong> ถ้าตัวเลขคำนวณมือถูก แต่เปลี่ยน R<sub>E</sub> แล้วผลบนหน้าเว็บไม่เปลี่ยน คุณจะตรวจค่าที่ส่งจากฟอร์มและค่าที่เข้าไปในฟังก์ชันอย่างไร?</div>
+<p class="small">สัปดาห์ถัดไปจะนำจุดทำงาน DC ไปเปรียบเทียบกับ SPICE และ DC Load Line</p>
+</section>
+</main>
+<footer class="shell">
+<p><strong>อ่านเพิ่ม</strong> · <a href="https://modelcontextprotocol.io/docs/learn/architecture">MCP Architecture</a> · <a href="https://opencode.ai/docs/mcp-servers/">OpenCode MCP Servers</a> · <a href="https://opencode.ai/docs/tools/#browser">OpenCode Browser Tools</a> · <a href="https://opencode.ai/docs/skills/">OpenCode Skills</a> · <a href="https://opencode.ai/docs/migrate-v1/">OpenCode V1/V2 Config</a> · <a href="https://github.com/microsoft/playwright-mcp">Playwright MCP</a></p>
+</footer>
+</body>
+</html>
