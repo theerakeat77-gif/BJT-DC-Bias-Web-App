@@ -10,10 +10,19 @@
   <main class="card">
     <header class="card-header">
       <h1>BJT Common-Emitter DC Bias</h1>
-      <p class="subtitle">วงจร Voltage-Divider Bias — คำนวณจุดทำงาน DC</p>
+      <p class="subtitle">เลือกโหมดวงจรแล้วคำนวณจุดทำงาน DC</p>
     </header>
 
     <form method="post" action="/calculate">
+      <label class="mode-select">
+        <span class="label">โหมดวงจร</span>
+        <select name="mode" id="mode">
+          <option value="divider" {% if form.mode == 'divider' %}selected{% endif %}>Voltage Divider Bias</option>
+          <option value="fixed" {% if form.mode == 'fixed' %}selected{% endif %}>Fixed Bias</option>
+          <option value="emitter" {% if form.mode == 'emitter' %}selected{% endif %}>Emitter Bias (แหล่งจ่ายเดียว)</option>
+        </select>
+      </label>
+
       <div class="grid">
         <label for="vcc">
           <span class="label">VCC (V)</span>
@@ -49,6 +58,12 @@
           {% if parsed.re %}<span class="parsed">= {{ "{:,.0f}".format(parsed.re) }} Ω</span>{% endif %}
         </label>
 
+        <label for="rb">
+          <span class="label">RB (Ω)</span>
+          <input type="text" id="rb" name="rb" value="{{ form.rb }}" inputmode="text" autocomplete="off">
+          {% if parsed.rb %}<span class="parsed">= {{ "{:,.0f}".format(parsed.rb) }} Ω</span>{% endif %}
+        </label>
+
         <label for="beta">
           <span class="label">β (hFE)</span>
           <input type="text" id="beta" name="beta" value="{{ form.beta }}" inputmode="decimal" autocomplete="off">
@@ -71,7 +86,7 @@
     {% if result %}
     <section class="results">
       <h2>
-        ผลลัพธ์
+        ผลลัพธ์ — {{ mode_labels.get(result.mode, result.mode) }}
         <span class="badge badge-{{ result.region|lower }}">{{ result.region }}</span>
       </h2>
 
