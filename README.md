@@ -1,4 +1,4 @@
-# BJT DC Bias Web App — ENG29 2121 Lab 02
+# BJT DC Bias Web App — ENG29 2121 Lab 03
 
 Flask web application สำหรับคำนวณ **DC Operating Point** ของวงจร
 BJT NPN Common-Emitter แบบ **Voltage-Divider Bias**
