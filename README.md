@@ -1,7 +1,7 @@
 # BJT Amplifier Simulator v1 — ENG29 2121 Lab 04
 
 Repository: <https://github.com/theerakeat77-gif/BJT-DC-Bias-Web-App.git>
-(ใส่ **Lab 4 commit SHA** ในใบส่งหลัง commit/push แล้ว)
+**Lab 4 commit SHA:** `83a479b41d98a1ea5835baaabbad1242a3eb648f` (commit ของโค้ด/หลักฐาน Lab 04; commit ถัดมาเป็นเพียงการบันทึก SHA นี้ในเอกสาร)
 
 ต่อยอดจาก Lab 03 (BJT DC Bias Web App) ให้เป็นโปรแกรมจำลอง Common-Emitter
 amplifier ที่รัน **ngspice จริง** สำหรับวงจร Voltage Divider อ้างอิงหนึ่งวงจร:

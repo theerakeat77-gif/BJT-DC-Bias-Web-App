@@ -140,16 +140,16 @@
 | AC + Transient | 2 | **ครบ** | Bode/waveform มี 141/504 จุดจากรันจริง, แกน+หน่วยถูกต้อง, เปลี่ยน source แล้วผลเปลี่ยน (B4–B6) |
 | UI และ Impeccable | 2 | **ครบ** | ติดตั้ง Impeccable 4.10.0 แบบ manual copy, รัน `context`/`detect` + isolated critique A/B จริง, ปรับ layout/typography/spacing/focus/format ตาม findings, เก็บ `impeccable-before.png`/`impeccable-after.png`, detector live desktop+mobile `[]` exit 0, 54 tests และ B2–B7 ไม่เปลี่ยน — ดู `docs/impeccable-install.md` |
 | Browser Acceptance | 1 | **ครบ** | B1–B8 บันทึกวิธี/INPUT/Observed/Evidence/Status ตรงความจริง; ใช้ OpenCode Browser tool + headless Chrome CDP ที่ viewport 390×844 จริง ไม่ได้อ้าง Playwright |
-| GitHub + Reproducibility | 1 | **ยังไม่ครบ** | README และ validation พร้อม แต่ยังไม่มี commit ของ Lab 4; ค่า SHA ใน `.git/refs/heads/main` คือ `7131057c4f4975c13e2f5049a202a98e066f8b0f` (clone เริ่มต้น) ยังไม่ใช่ Lab 4; ต้อง commit/push แล้วใส่ URL + SHA ใหม่ในใบส่ง |
+| GitHub + Reproducibility | 1 | **ครบ (รอ push)** | repo URL `https://github.com/theerakeat77-gif/BJT-DC-Bias-Web-App.git`; Lab 4 commit `83a479b41d98a1ea5835baaabbad1242a3eb648f` (โค้ด + หลักฐาน + `.opencode/`), commit ถัดมาเป็นเอกสารบันทึก SHA; `.gitignore` กัน `.venv/`, `.env`, `*.raw`, `run.log`, `circuit.cir`; 54 tests ทำซ้ำได้ด้วยคำสั่งใน README |
 
-**สรุป self-check: 9/10 คะแนนที่หลักฐานครบแล้ว / อีก 1 คะแนนยังเสี่ยง** (GitHub+Reproducibility 1) คะแนนจริงขึ้นกับ TA
+**สรุป self-check: 10/10 คะแนนที่หลักฐานครบแล้ว** (GitHub+Reproducibility ครบในเครื่อง; ต้อง push ให้เรียบร้อยก่อนส่ง) คะแนนจริงขึ้นกับ TA
 
 ### Submission checklist
 
 - [x] **Impeccable/Unslop**: critique/polish จริง, before/after screenshot, 54 tests และ B2–B7 ไม่เปลี่ยน (`docs/impeccable-install.md`)
 - [x] **Browser Acceptance**: B1–B8 ครบ รวม mobile viewport 390×844 จริง
 - [x] **คำตอบตรวจรายบุคคล**: `docs/oral-check.md` มีคำตอบข้อเท็จจริง 5 ข้อ พร้อมแก้เป็นภาษาตัวเอง
-- [ ] **Commit SHA สำหรับ Lab 4** หลัง commit/push (repo URL คือ `https://github.com/theerakeat77-gif/BJT-DC-Bias-Web-App.git`)
+- [x] **Commit SHA สำหรับ Lab 4** `83a479b41d98a1ea5835baaabbad1242a3eb648f` (repo URL `https://github.com/theerakeat77-gif/BJT-DC-Bias-Web-App.git`) — อยู่ระหว่าง push ขึ้น origin/main
 - [ ] **Reflect 3–5 บรรทัด**: `docs/reflection.md` เป็นร่างข้อเท็จจริงจากหลักฐาน — **ต้องเขียน/แก้ด้วยคำของนักศึกษาเอง** ก่อนส่ง (AI ไม่ควรแต่งความรู้สึกส่วนตัวแทน)
 - [ ] ตอบคำถามสั้นของ TA ด้วยภาษาของตัวเองจาก `docs/oral-check.md` (ห้ามอ่านตามliteral)
 
