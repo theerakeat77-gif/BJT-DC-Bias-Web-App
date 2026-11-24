@@ -108,6 +108,6 @@ Engine รันแบบ batch `ngspice -b -o run.log -r run.raw circuit.cir` �
 1. รับ Instructor Starter Kit (netlist + BJT model) แล้วแทนที่
    `MODEL_CARD` ใน `spice_engine.py` และอัปเดต validation ให้ตรงชื่อจริง
 2. รับ Starter Kit แล้วทดสอบซ้ำกับ model card ของผู้สอน (ถ้าต้องการเท่าตัวเลขใน handout)
-3. push commit Lab 4 `83a479b41d98a1ea5835baaabbad1242a3eb648f` ขึ้น origin/main แล้วตรวจหน้า GitHub (SHA record อยู่ใน README/validation แล้ว)
+3. push commit Lab 4 `83a479b41d98a1ea5835baaabbad1242a3eb648f` ขึ้น origin/main **สำเร็จ** (remote = `21fa55c...`, repo Public; SHA record อยู่ใน README/validation แล้ว)
 4. แก้ `docs/reflection.md` ให้เป็นภาษาของตัวเองก่อนส่ง; AI ทำร่างข้อเท็จจริงให้แล้วแต่ไม่ควรแต่งความเห็นส่วนตัว
 
