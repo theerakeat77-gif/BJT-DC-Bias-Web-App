@@ -3,76 +3,110 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BJT DC Bias Calculator</title>
+  <title>BJT Common-Emitter — Lab 03 + Lab 04</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%231f6feb'/%3E%3Ctext x='16' y='22' font-size='17' font-family='Arial' text-anchor='middle' fill='white'%3EB%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
   <main class="card">
     <header class="card-header">
-      <h1>BJT Common-Emitter DC Bias</h1>
-      <p class="subtitle">เลือกโหมดวงจรแล้วคำนวณจุดทำงาน DC</p>
+      <h1>BJT Common-Emitter — Lab 03 + Lab 04</h1>
+      <p class="subtitle">เลือกโหมดวงจร/การวิเคราะห์ได้จาก <strong>Dropdown เดียว</strong> ด้านล่าง</p>
     </header>
 
-    <form method="post" action="/calculate">
+    <form method="post" action="/run" class="unified-form">
       <label class="mode-select">
-        <span class="label">โหมดวงจร</span>
+        <span class="label">โหมดวงจร / การวิเคราะห์</span>
         <select name="mode" id="mode">
-          <option value="divider" {% if form.mode == 'divider' %}selected{% endif %}>Voltage Divider Bias</option>
-          <option value="fixed" {% if form.mode == 'fixed' %}selected{% endif %}>Fixed Bias</option>
-          <option value="emitter" {% if form.mode == 'emitter' %}selected{% endif %}>Emitter Bias (แหล่งจ่ายเดียว)</option>
+          <optgroup label="Lab 03 · DC Bias (Analytical)">
+            <option value="divider" {% if form.mode == 'divider' %}selected{% endif %}>Voltage Divider Bias</option>
+            <option value="fixed" {% if form.mode == 'fixed' %}selected{% endif %}>Fixed Bias</option>
+            <option value="emitter" {% if form.mode == 'emitter' %}selected{% endif %}>Emitter Bias (แหล่งจ่ายเดียว)</option>
+          </optgroup>
+          <optgroup label="Lab 04 · CE Amplifier (ngspice จริง)">
+            <option value="ce-dc" {% if form.mode == 'ce-dc' %}selected{% endif %}>CE Amplifier — DC <code>.op</code></option>
+            <option value="ce-ac" {% if form.mode == 'ce-ac' %}selected{% endif %}>CE Amplifier — AC <code>.ac</code></option>
+            <option value="ce-tran" {% if form.mode == 'ce-tran' %}selected{% endif %}>CE Amplifier — Transient <code>.tran</code></option>
+          </optgroup>
         </select>
       </label>
 
-      <div class="grid">
-        <label for="vcc">
-          <span class="label">VCC (V)</span>
-          <input type="text" id="vcc" name="vcc" value="{{ form.vcc }}" inputmode="decimal" autocomplete="off">
-        </label>
+      <fieldset class="param-group">
+        <legend>Parameters</legend>
+        <div class="grid">
+          <label for="vcc">
+            <span class="label">VCC (V)</span>
+            <input type="text" id="vcc" name="vcc" value="{{ form.vcc }}" inputmode="decimal" autocomplete="off">
+          </label>
 
-        <label for="vbe">
-          <span class="label">VBE (V)</span>
-          <input type="text" id="vbe" name="vbe" value="{{ form.vbe }}" inputmode="decimal" autocomplete="off">
-        </label>
+          <label for="vbe">
+            <span class="label">VBE (V)</span>
+            <input type="text" id="vbe" name="vbe" value="{{ form.vbe }}" inputmode="decimal" autocomplete="off">
+          </label>
 
-        <label for="r1">
-          <span class="label">R1 (Ω)</span>
-          <input type="text" id="r1" name="r1" value="{{ form.r1 }}" inputmode="text" autocomplete="off">
-          {% if parsed.r1 %}<span class="parsed">= {{ "{:,.0f}".format(parsed.r1) }} Ω</span>{% endif %}
-        </label>
+          <label for="r1">
+            <span class="label">R1 (Ω)</span>
+            <input type="text" id="r1" name="r1" value="{{ form.r1 }}" inputmode="decimal" autocomplete="off">
+            {% if parsed.r1 %}<span class="parsed">= {{ "{:,.0f}".format(parsed.r1) }} Ω</span>{% endif %}
+          </label>
 
-        <label for="r2">
-          <span class="label">R2 (Ω)</span>
-          <input type="text" id="r2" name="r2" value="{{ form.r2 }}" inputmode="text" autocomplete="off">
-          {% if parsed.r2 %}<span class="parsed">= {{ "{:,.0f}".format(parsed.r2) }} Ω</span>{% endif %}
-        </label>
+          <label for="r2">
+            <span class="label">R2 (Ω)</span>
+            <input type="text" id="r2" name="r2" value="{{ form.r2 }}" inputmode="decimal" autocomplete="off">
+            {% if parsed.r2 %}<span class="parsed">= {{ "{:,.0f}".format(parsed.r2) }} Ω</span>{% endif %}
+          </label>
 
-        <label for="rc">
-          <span class="label">RC (Ω)</span>
-          <input type="text" id="rc" name="rc" value="{{ form.rc }}" inputmode="text" autocomplete="off">
-          {% if parsed.rc %}<span class="parsed">= {{ "{:,.0f}".format(parsed.rc) }} Ω</span>{% endif %}
-        </label>
+          <label for="rc">
+            <span class="label">RC (Ω)</span>
+            <input type="text" id="rc" name="rc" value="{{ form.rc }}" inputmode="decimal" autocomplete="off">
+            {% if parsed.rc %}<span class="parsed">= {{ "{:,.0f}".format(parsed.rc) }} Ω</span>{% endif %}
+          </label>
 
-        <label for="re">
-          <span class="label">RE (Ω)</span>
-          <input type="text" id="re" name="re" value="{{ form.re }}" inputmode="text" autocomplete="off">
-          {% if parsed.re %}<span class="parsed">= {{ "{:,.0f}".format(parsed.re) }} Ω</span>{% endif %}
-        </label>
+          <label for="re">
+            <span class="label">RE (Ω)</span>
+            <input type="text" id="re" name="re" value="{{ form.re }}" inputmode="decimal" autocomplete="off">
+            {% if parsed.re %}<span class="parsed">= {{ "{:,.0f}".format(parsed.re) }} Ω</span>{% endif %}
+          </label>
 
-        <label for="rb">
-          <span class="label">RB (Ω)</span>
-          <input type="text" id="rb" name="rb" value="{{ form.rb }}" inputmode="text" autocomplete="off">
-          {% if parsed.rb %}<span class="parsed">= {{ "{:,.0f}".format(parsed.rb) }} Ω</span>{% endif %}
-        </label>
+          <label for="rb">
+            <span class="label">RB (Ω)</span>
+            <input type="text" id="rb" name="rb" value="{{ form.rb }}" inputmode="decimal" autocomplete="off">
+            {% if parsed.rb %}<span class="parsed">= {{ "{:,.0f}".format(parsed.rb) }} Ω</span>{% endif %}
+          </label>
 
-        <label for="beta">
-          <span class="label">β (hFE)</span>
-          <input type="text" id="beta" name="beta" value="{{ form.beta }}" inputmode="decimal" autocomplete="off">
-        </label>
+          <label for="beta">
+            <span class="label">β (hFE)</span>
+            <input type="text" id="beta" name="beta" value="{{ form.beta }}" inputmode="decimal" autocomplete="off">
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="param-group sim-params">
+        <legend>Lab 04 SPICE parameters <span class="note">(ใช้เฉพาะโหมด CE Amplifier)</span></legend>
+        <div class="grid sim-grid">
+          <label for="sim-rl"><span class="label">RL (Ω)</span>
+            <input type="text" id="sim-rl" name="rl" value="{{ form.rl }}" inputmode="decimal" autocomplete="off"></label>
+          <label for="sim-cin"><span class="label">Cin (F)</span>
+            <input type="text" id="sim-cin" name="cin" value="{{ form.cin }}" inputmode="decimal" autocomplete="off"></label>
+          <label for="sim-cout"><span class="label">Cout (F)</span>
+            <input type="text" id="sim-cout" name="cout" value="{{ form.cout }}" inputmode="decimal" autocomplete="off"></label>
+          <label for="sim-amplitude"><span class="label">Source amplitude (V peak)</span>
+            <input type="text" id="sim-amplitude" name="amplitude" value="{{ form.amplitude }}" inputmode="decimal" autocomplete="off"></label>
+          <label for="sim-frequency"><span class="label">Source frequency (Hz)</span>
+            <input type="text" id="sim-frequency" name="frequency" value="{{ form.frequency }}" inputmode="decimal" autocomplete="off"></label>
+        </div>
+      </fieldset>
+
+      <p class="hint">
+        ค่าความต้านทานรับได้ทั้ง <code>100000</code>, <code>100k</code>, <code>2.2k</code>, <code>1M</code>
+        · SPICE รับ <code>10u</code>, <code>0.01</code>, <code>1k</code>
+        · จุดวัด <code>Vin</code> อยู่หลัง Cin, <code>Vout</code> อยู่หลัง Cout ที่ RL
+        · Model: <code>t2n2222</code> (ngspice 47 example card, ไม่ใช่ Starter Kit ของผู้สอน)
+      </p>
+
+      <div class="form-actions">
+        <button type="submit">Calculate / Run</button>
       </div>
-
-      <p class="hint">ค่าความต้านทานรับได้ทั้ง <code>100000</code>, <code>100k</code>, <code>2.2k</code>, <code>1M</code></p>
-
-      <button type="submit">Calculate</button>
     </form>
 
     {% if errors %}
@@ -109,6 +143,109 @@
         {% endfor %}
       </ul>
       {% endif %}
+    </section>
+    {% endif %}
+
+    {% if sim_errors %}
+    <div class="status error" role="status" aria-live="polite">
+      <strong>Status: Error</strong>
+      <span>ไม่มีผล SPICE ที่เชื่อถือได้ในรอบนี้</span>
+    </div>
+    <ul class="errors">
+      {% for error in sim_errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+    <p class="hint">ไม่มีผล SPICE แสดงในรอบนี้ — แก้อินพุตหรือติดตั้ง solver แล้วรันใหม่</p>
+    {% endif %}
+
+    {% if sim_result %}
+    <section class="sim-results">
+      <div class="status success" role="status" aria-live="polite">
+        <strong>Status: {{ sim_result.status }}</strong>
+        <span>Engine: {{ sim_result.engine }}</span>
+        <span>BJT model: {{ sim_result.model }}</span>
+        <span>Analysis: {{ sim_result.analysis|upper }}</span>
+      </div>
+
+      {% if sim_result.analysis == 'dc' %}
+      <h3>DC Operating Point — ผลจาก SPICE <span class="source-tag">SPICE</span></h3>
+      <table>
+        <tbody>
+          <tr><th scope="row">VB</th><td class="num">{{ "%.4f"|format(sim_result.values.vb) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">VE</th><td class="num">{{ "%.4f"|format(sim_result.values.ve) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">VC</th><td class="num">{{ "%.4f"|format(sim_result.values.vc) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">VCE</th><td class="num">{{ "%.4f"|format(sim_result.values.vce) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">IC <span class="derived">(จากแรงดันตกที่ RC)</span></th><td class="num">{{ "%.4f"|format(sim_result.values.ic * 1000.0) }}</td><td class="unit">mA</td></tr>
+          <tr><th scope="row">IE <span class="derived">(จากแรงดันตกที่ RE)</span></th><td class="num">{{ "%.4f"|format(sim_result.values.ie * 1000.0) }}</td><td class="unit">mA</td></tr>
+          <tr><th scope="row">IB <span class="derived">(IE − IC)</span></th><td class="num">{{ "%.4f"|format(sim_result.values.ib * 1000000.0) }}</td><td class="unit">µA</td></tr>
+        </tbody>
+      </table>
+
+      {% if analytical %}
+      <h3>Analytical Reference <span class="source-tag reference">Analytical</span></h3>
+      <p class="note">คำนวณจาก <code>dc_bias.py</code> ด้วย β = {{ "%.0f"|format(analytical_beta) }},
+        VBE = {{ "%.2f"|format(analytical_vbe) }} V คงที่ — ไม่ใช่ค่าจากโมเดล SPICE จึงไม่บังคับให้เท่าทุกหลัก</p>
+      <table>
+        <tbody>
+          <tr><th scope="row">IC</th><td class="num">{{ "%.4f"|format(analytical.ic * 1000.0) }}</td><td class="unit">mA</td></tr>
+          <tr><th scope="row">VCE</th><td class="num">{{ "%.4f"|format(analytical.vce) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">Region</th><td colspan="2">{{ analytical.region }}</td></tr>
+        </tbody>
+      </table>
+      {% endif %}
+      {% endif %}
+
+      {% if sim_result.analysis == 'ac' %}
+      <h3>AC Frequency Response — ผลจาก SPICE <span class="source-tag">SPICE</span></h3>
+      <div class="chart-block">{{ sim_plots.gain|safe }}</div>
+      <div class="chart-block">{{ sim_plots.phase|safe }}</div>
+      <table>
+        <tbody>
+          <tr><th scope="row">Gain สูงสุด</th><td class="num">{{ "%.2f"|format(sim_result.values.midband_gain_db) }}</td><td class="unit">dB</td></tr>
+          <tr><th scope="row">ที่ความถี่</th><td class="num">{{ "%.4g"|format(sim_result.values.midband_freq) }}</td><td class="unit">Hz</td></tr>
+          <tr><th scope="row">Phase ที่ Gain สูงสุด</th><td class="num">{{ "%.1f"|format(sim_result.values.phase_deg) }}</td><td class="unit">°</td></tr>
+          <tr>
+            <th scope="row">fL (−3 dB)</th>
+            {% if sim_result.values.fl_hz is string %}
+            <td class="num no-unit" colspan="2">{{ sim_result.values.fl_hz }}</td>
+            {% else %}
+            <td class="num">{{ "%.4g"|format(sim_result.values.fl_hz) }}</td><td class="unit">Hz</td>
+            {% endif %}
+          </tr>
+          <tr>
+            <th scope="row">fH (−3 dB)</th>
+            {% if sim_result.values.fh_hz is string %}
+            <td class="num no-unit" colspan="2">{{ sim_result.values.fh_hz }}</td>
+            {% else %}
+            <td class="num">{{ "%.4g"|format(sim_result.values.fh_hz) }}</td><td class="unit">Hz</td>
+            {% endif %}
+          </tr>
+        </tbody>
+      </table>
+      {% endif %}
+
+      {% if sim_result.analysis == 'transient' %}
+      <h3>Transient Response — ผลจาก SPICE <span class="source-tag">SPICE</span></h3>
+      <div class="chart-block">{{ sim_plots.waveform|safe }}</div>
+      <table>
+        <tbody>
+          <tr><th scope="row">Vin peak</th><td class="num">{{ "%.4f"|format(sim_result.values.vin_peak) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">Vout peak</th><td class="num">{{ "%.4f"|format(sim_result.values.vout_peak) }}</td><td class="unit">V</td></tr>
+          <tr><th scope="row">Gain |Vout/Vin|</th><td class="num">{{ "%.2f"|format(sim_result.values.gain) }}</td><td class="unit">×</td></tr>
+          <tr><th scope="row">Phase (Vout เทียบ Vin)</th><td class="num">{{ "%.1f"|format(sim_result.values.phase_deg) }}</td><td class="unit">°</td></tr>
+          <tr><th scope="row">Period</th><td class="num">{{ "%.4g"|format(sim_result.values.period) }}</td><td class="unit">s</td></tr>
+        </tbody>
+      </table>
+      {% endif %}
+
+      <details class="run-evidence">
+        <summary>Netlist และ ngspice log ที่ใช้รันจริง</summary>
+        <h4>circuit.cir</h4>
+        <pre>{{ sim_result.netlist }}</pre>
+        <h4>run.log (ท้ายไฟล์)</h4>
+        <pre>{{ sim_result.log_excerpt }}</pre>
+      </details>
     </section>
     {% endif %}
   </main>

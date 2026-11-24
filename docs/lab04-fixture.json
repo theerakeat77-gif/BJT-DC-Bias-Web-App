@@ -1,0 +1,2350 @@
+{
+  "schema_version": "1.0",
+  "title": "Lab 04 — BJT CE Amplifier Simulator: ชุดข้อมูลเตรียมงาน",
+  "generated_on": "2026-11-24",
+  "sources": [
+    {
+      "id": "lab04-handout",
+      "path": "C:/Users/b6806200/Downloads/Lab04_BJT_Amplifier_Simulator_2-2569.html",
+      "used_sections": [
+        "02 SCREEN TARGET",
+        "03 ARCHITECTURE",
+        "04 SETUP",
+        "06 ENGINEERING MODEL",
+        "07 BUILD",
+        "09 BROWSER ACCEPTANCE"
+      ]
+    },
+    {
+      "id": "lab03-repo-readme",
+      "path": "README.md",
+      "used_sections": [
+        "สมการที่ใช้",
+        "ค่าตัวอย่างและผลอ้างอิง"
+      ]
+    },
+    {
+      "id": "lab03-validation",
+      "path": "docs/validation.md",
+      "used_sections": [
+        "ตารางตรวจรับ A1–A7",
+        "4 กรณีตรวจในเบราว์เซอร์"
+      ]
+    },
+    {
+      "id": "lab03-handout",
+      "path": "docs/lab03-handout.html",
+      "used_sections": [
+        "06 Browser acceptance A1–A5"
+      ]
+    }
+  ],
+  "environment_check": {
+    "checked_on": "2026-11-24",
+    "app_url": "http://127.0.0.1:5000/",
+    "python": "3.14.2",
+    "flask": "3.1.3 (pins from requirements.txt)",
+    "unit_tests": "54 tests OK (28 Lab 03 + 20 SPICE/route + 6 unified dropdown)",
+    "ngspice_in_path": false,
+    "ngspice_portable": "%LOCALAPPDATA%\\ngspice-47\\Spice64\\bin\\ngspice_con.exe (ngspice-47, set via NGSPICE_EXECUTABLE)",
+    "starter_kit_found": false,
+    "git_in_path": false,
+    "ui": "single <select name=mode> with divider/fixed/emitter/ce-dc/ce-ac/ce-tran posting to /run; legacy /calculate and /simulate kept for tests",
+    "impact": "รัน .op/.ac/.tran ได้แล้วด้วย ngspice-47 portable + model card t2n2222 จาก example; ยังรอ Starter Kit ของผู้สอนเพื่อแทน model ก่อนส่งงาน; ห้ามใส่ค่าจำลองแทน"
+  },
+  "baseline_circuit": {
+    "topology": "NPN common-emitter, voltage-divider bias, RE ไม่มี bypass capacitor",
+    "provenance": "lab04-handout §06 Baseline Reference / Input Fixture",
+    "parameters": {
+      "vcc_v": 12.0,
+      "r1_ohm": 100000.0,
+      "r2_ohm": 22000.0,
+      "rc_ohm": 2200.0,
+      "re_ohm": 1000.0,
+      "rl_ohm": 10000.0,
+      "cin_f": 1e-05,
+      "cout_f": 1e-05,
+      "source_peak_v": 0.01,
+      "source_freq_hz": 1000.0,
+      "beta": 100.0,
+      "vbe_v": 0.7
+    },
+    "form_input_strings": {
+      "mode": "divider",
+      "vcc": "12",
+      "r1": "100k",
+      "r2": "22k",
+      "rc": "2.2k",
+      "re": "1k",
+      "beta": "100",
+      "vbe": "0.70"
+    },
+    "ce_bypass_capacitor": false,
+    "bjt_model": {
+      "name": "t2n2222",
+      "parameters": "is=19f bf=150 vaf=100 ikf=0.18 ise=50p ne=2.5 br=7.5 var=6.4 ikr=12m isc=8.7p nc=1.2 rb=50 re=0.4 rc=0.3 cje=26p tf=0.5n cjc=11p tr=7n xtb=1.5 kf=0.032f af=1",
+      "source": "ngspice-47 examples/noise/bipolar-noise.cir (T. Tuma & A. Burmen, 2009) — ใช้แทน Starter Kit ชั่วคราว",
+      "required_before_spice_run": false,
+      "instructor_starter_kit_found": false
+    },
+    "measurement_points": {
+      "vin": "base หลัง Cin (ต้องระบุ node ให้ชัด)",
+      "vout": "collector ผ่าน Cout ที่ขั้ว RL (ต้องระบุ node ให้ชัด)",
+      "current_reference": "IC ตามทิศจาก collector ลง emitter"
+    }
+  },
+  "analytical_reference": {
+    "source": "dc_bias.py (β และ VBE คงที่, Forward-Active) เรียกใช้โดยตรงวันที่ 2026-11-24",
+    "units": {
+      "voltage": "V",
+      "current": "A",
+      "resistance": "ohm"
+    },
+    "cases": [
+      {
+        "id": "A1_BASELINE",
+        "mode": "divider",
+        "overrides": {},
+        "vth_v": 2.163934,
+        "rth_ohm": 18032.786885,
+        "ib_a": 1.2298581e-05,
+        "ic_a": 0.0012298581,
+        "ie_a": 0.0012421567,
+        "vb_v": 1.9421567,
+        "ve_v": 1.2421567,
+        "vc_v": 9.2943121,
+        "vce_v": 8.0521554,
+        "region": "ACTIVE",
+        "warnings": []
+      },
+      {
+        "id": "A2_FIXED_RB_1M",
+        "mode": "fixed",
+        "overrides": {
+          "rb_ohm": 1000000.0
+        },
+        "ib_a": 1.13e-05,
+        "ic_a": 0.00113,
+        "ie_a": 0.0011413,
+        "vb_v": 0.7,
+        "ve_v": 0.0,
+        "vc_v": 9.514,
+        "vce_v": 9.514,
+        "region": "ACTIVE",
+        "warnings": []
+      },
+      {
+        "id": "A3_EMITTER_RE_1K",
+        "mode": "emitter",
+        "overrides": {
+          "rb_ohm": 1000000.0,
+          "re_ohm": 1000.0
+        },
+        "ib_a": 1.0263397e-05,
+        "ic_a": 0.0010263397,
+        "ie_a": 0.0010366031,
+        "vb_v": 1.7366031,
+        "ve_v": 1.0366031,
+        "vc_v": 9.7420527,
+        "vce_v": 8.7054496,
+        "region": "ACTIVE",
+        "warnings": []
+      },
+      {
+        "id": "A4_EMITTER_RE_2K",
+        "mode": "emitter",
+        "overrides": {
+          "rb_ohm": 1000000.0,
+          "re_ohm": 2000.0
+        },
+        "ib_a": 9.4009983e-06,
+        "ic_a": 0.00094009983,
+        "ie_a": 0.00094950083,
+        "vb_v": 2.5990017,
+        "ve_v": 1.8990017,
+        "vc_v": 9.9317804,
+        "vce_v": 8.0327787,
+        "region": "ACTIVE",
+        "warnings": [],
+        "direction_vs_A3": "IC ลดลงเมื่อ RE เพิ่ม"
+      },
+      {
+        "id": "B3_DIVIDER_RE_2K",
+        "mode": "divider",
+        "overrides": {
+          "re_ohm": 2000.0
+        },
+        "ib_a": 6.6532558e-06,
+        "ic_a": 0.00066532558,
+        "ie_a": 0.00067197884,
+        "vb_v": 2.0439577,
+        "ve_v": 1.3439577,
+        "vc_v": 10.5362837,
+        "vce_v": 9.192326,
+        "region": "ACTIVE",
+        "warnings": [],
+        "direction_vs_baseline": "IC ลดลง VCE เพิ่มขึ้น"
+      },
+      {
+        "id": "B3_DIVIDER_RE_470",
+        "mode": "divider",
+        "overrides": {
+          "re_ohm": 470.0
+        },
+        "ib_a": 2.2349193e-05,
+        "ic_a": 0.0022349193,
+        "ie_a": 0.0022572685,
+        "vb_v": 1.7609162,
+        "ve_v": 1.0609162,
+        "vc_v": 7.0831775,
+        "vce_v": 6.0222613,
+        "region": "ACTIVE",
+        "warnings": [],
+        "direction_vs_baseline": "IC เพิ่มขึ้น VCE ลดลง"
+      },
+      {
+        "id": "REGRESSION_R2_1K_CUTOFF",
+        "mode": "divider",
+        "overrides": {
+          "r2_ohm": 1000.0
+        },
+        "ib_a": 0.0,
+        "ic_a": 0.0,
+        "ie_a": 0.0,
+        "vb_v": 0.1188119,
+        "ve_v": 0.0,
+        "vc_v": 12.0,
+        "vce_v": 12.0,
+        "region": "CUTOFF"
+      },
+      {
+        "id": "REGRESSION_RC_10K_SATURATION",
+        "mode": "divider",
+        "overrides": {
+          "rc_ohm": 10000.0
+        },
+        "ib_a": 1.2298581e-05,
+        "ic_a": 0.0012298581,
+        "ie_a": 0.0012421567,
+        "vb_v": 1.9421567,
+        "ve_v": 1.2421567,
+        "vc_v": -0.2985815,
+        "vce_v": -1.5407382,
+        "region": "SATURATION",
+        "note": "ค่าดิบตามสมการ ไม่ clamp — SPICE จะให้ค่าต่างกันขึ้นกับ BJT model"
+      }
+    ]
+  },
+  "spice_capture_template": {
+    "rule": "ทุกฟิลด์ต้องมาจากการรัน ngspice จริงเท่านั้น; ห้ามเติมตัวเลขจาก wireframe/ภาพใน handout",
+    "dc_op": {
+      "status": null,
+      "ngspice_version": null,
+      "bjt_model_name": null,
+      "netlist_path": null,
+      "log_path": null,
+      "vb_v": null,
+      "ve_v": null,
+      "vc_v": null,
+      "vce_v": null,
+      "ic_a": null,
+      "ib_a": null
+    },
+    "ac": {
+      "status": null,
+      "frequency_hz": [],
+      "gain_magnitude_v_per_v": [],
+      "gain_db": [],
+      "phase_deg": [],
+      "vin_node": null,
+      "vout_node": null,
+      "f_low_hz": null,
+      "f_high_hz": null,
+      "cutoff_note": "not determined in sweep range (ถ้าไม่มีจุดตัด -3 dB)"
+    },
+    "transient": {
+      "status": null,
+      "time_s": [],
+      "vin_v": [],
+      "vout_v": [],
+      "source_peak_v": 0.01,
+      "source_freq_hz": 1000.0,
+      "measured_vin_peak_v": null,
+      "measured_vout_peak_v": null,
+      "phase_relation": null,
+      "phase_relation_expected": "กลับเฟส ~180° ระหว่าง Vin กับ Vout ที่ความถี่กลางย่าน (ตรวจจากผลจริง)"
+    }
+  },
+  "acceptance_cases": [
+    {
+      "id": "B1",
+      "name": "Regression  Lab 3",
+      "action": "สลับ Divider / Fixed / Emitter แล้วกรอกชุดค่า A1–A4",
+      "inputs": {
+        "common": {
+          "vcc_v": 12.0,
+          "rc_ohm": 2200.0,
+          "beta": 100.0,
+          "vbe_v": 0.7
+        },
+        "cases": [
+          "A1_BASELINE",
+          "A2_FIXED_RB_1M",
+          "A3_EMITTER_RE_1K",
+          "A4_EMITTER_RE_2K"
+        ]
+      },
+      "expected": "IC/VCE ตรง analytical_reference ภายใน 0.01 mA / 0.02 V (ใช้ค่าก่อนปัดเศษเทียบ)",
+      "evidence": "snapshot ค่าที่อ่านจากหน้าเว็บ",
+      "status": "PASS"
+    },
+    {
+      "id": "B2",
+      "name": "DC SPICE",
+      "action": "เลือก CE Reference แล้วรัน .op",
+      "inputs": {
+        "case": "A1_BASELINE"
+      },
+      "expected": "แสดง VB/VE/VC/VCE/IC พร้อม engine status, ชื่อ BJT model และ ngspice version จาก log จริง",
+      "evidence": "ค่าบนหน้าเว็บ + ngspice log",
+      "status": "PASS"
+    },
+    {
+      "id": "B3",
+      "name": "เปลี่ยน RE",
+      "action": "คงค่าอื่น เปลี่ยน RE เป็น 2 kΩ แล้วเป็น 470 Ω รันซ้ำ",
+      "inputs": {
+        "cases": [
+          "B3_DIVIDER_RE_2K",
+          "B3_DIVIDER_RE_470"
+        ]
+      },
+      "expected": "Operating point/Gain เปลี่ยนตามผลจำลอง (ทิศทางตาม analytical_reference) ไม่ใช่ค่าค้าง",
+      "evidence": "ผลก่อน/หลัง + log ของแต่ละรอบ",
+      "status": "PASS"
+    },
+    {
+      "id": "B4",
+      "name": "AC Bode",
+      "action": "รัน .ac",
+      "inputs": {
+        "case": "A1_BASELINE",
+        "vin_node": "base หลัง Cin",
+        "vout_node": "collector ด้าน RL"
+      },
+      "expected": "แกน frequency พร้อมหน่วย, gain magnitude/phase จากข้อมูลจริง; ถ้าไม่มี -3 dB ให้ระบุ not determined in sweep range",
+      "evidence": "chart + ngspice output",
+      "status": "PASS"
+    },
+    {
+      "id": "B5",
+      "name": "Transient 10 mV / 1 kHz",
+      "action": "รัน .tran ด้วย source 10 mV peak, 1 kHz",
+      "inputs": {
+        "case": "A1_BASELINE",
+        "source_peak_v": 0.01,
+        "source_freq_hz": 1000.0
+      },
+      "expected": "Vin/Vout กับเวลา/หน่วยแรงดันครบ และตรวจทิศทางกลับเฟสจากข้อมูลจริง",
+      "evidence": "screenshot + สรุปทิศทางเฟส",
+      "status": "PASS"
+    },
+    {
+      "id": "B6",
+      "name": "เปลี่ยน Source",
+      "action": "เปลี่ยน amplitude/frequency แล้วรันซ้ำ",
+      "inputs": {
+        "variants": [
+          {
+            "source_peak_v": 0.02,
+            "source_freq_hz": 1000.0
+          },
+          {
+            "source_peak_v": 0.01,
+            "source_freq_hz": 10000.0
+          }
+        ]
+      },
+      "expected": "waveform/สเปกตรัมเปลี่ยนตามค่าที่ตั้ง ไม่ใช่กราฟ hard-code",
+      "evidence": "ภาพก่อน/หลัง + ข้อมูลจาก run จริง",
+      "status": "PASS"
+    },
+    {
+      "id": "B7",
+      "name": "Invalid / Engine fail",
+      "action": "กรอก RE = 0 หรือจำลองกรณี ngspice ไม่พร้อม",
+      "inputs": {
+        "re": "0"
+      },
+      "expected": "HTTP 200 พร้อม error/status ชัดเจน ไม่ค้าง และไม่แสดงผลสำเร็จปลอมหรือกราฟเก่า",
+      "evidence": "ข้อความจาก snapshot",
+      "status": "PASS"
+    },
+    {
+      "id": "B8",
+      "name": "UI desktop/mobile",
+      "action": "เปิด viewport ~1280 px และ ~390 px แล้วสลับโหมด",
+      "inputs": {
+        "viewports": [
+          [
+            1280,
+            800
+          ],
+          [
+            390,
+            844
+          ]
+        ]
+      },
+      "expected": "กราฟ/หน่วย/ปุ่มอ่านได้ ไม่มีเนื้อหาสำคัญถูกตัด",
+      "evidence": "screenshot 2 ขนาด + headless Chrome CDP 390x844 + impeccable detect []",
+      "status": "PASS",
+      "note": "desktop 1000/1440px PASS; mobile 390x844 PASS ด้วย Emulation.setDeviceMetricsOverride (scrollWidth=390, chart width=302) และ Impeccable manual install"
+    }
+  ],
+  "engineering_rules": [
+    "Input Fixture จาก handout เป็นค่าตั้งต้นเท่านั้น ไม่ใช่ผลคำนวณ/กราฟที่ยืนยันแล้ว",
+    "ห้ามใส่ Gain, fL, fH หรือ waveform สำเร็จรูปโดยอ้างว่าเป็นผล ngspice ก่อนรันจริง",
+    "แยกผล analytical (dc_bias.py) กับผล SPICE ให้ชัด และอธิบายสมมติฐานของแต่ละแบบ",
+    "ห้ามใช้ shell=True; ใช้ subprocess.run(argument list, timeout, working dir แยกต่อรอบ)",
+    "Solver ไม่พบ / run fail / output ว่าง / timeout / input ผิด ต้องไม่คืนกราฟเก่าพร้อม status Success",
+    "ถ้าไม่ได้ทดสอบจริง ให้บันทึก NOT RUN พร้อมเหตุผล ห้ามอ้างว่า PASS"
+  ],
+  "spice_observed_local_run": {
+    "source": "ngspice-47 local run 2026-11-24; model card t2n2222 from ngspice 47 example (not instructor Starter Kit)",
+    "batch_command": "ngspice -b -o run.log -r run.raw circuit.cir",
+    "dc_baseline": {
+      "status": "Success",
+      "engine": "ngspice-47",
+      "bjt_model": "t2n2222",
+      "vb_v": 1.979097,
+      "ve_v": 1.331351,
+      "vc_v": 9.093577,
+      "vce_v": 7.762225,
+      "ic_a": 0.001321101,
+      "ie_a": 0.001331351,
+      "ib_a": 1.025e-05,
+      "note": "IC=(VCC-VC)/RC, IE=VE/RE, IB=IE-IC; from run.raw node voltages"
+    },
+    "dc_re_2k": {
+      "status": "Success",
+      "engine": "ngspice-47",
+      "bjt_model": "t2n2222",
+      "vb_v": 2.061597,
+      "ve_v": 1.430836,
+      "vc_v": 10.438566,
+      "vce_v": 9.00773,
+      "ic_a": 0.000709743,
+      "ie_a": 0.000715418,
+      "ib_a": 5.675e-06,
+      "note": "IC=(VCC-VC)/RC, IE=VE/RE, IB=IE-IC; from run.raw node voltages"
+    },
+    "dc_re_470": {
+      "status": "Success",
+      "engine": "ngspice-47",
+      "bjt_model": "t2n2222",
+      "vb_v": 1.822654,
+      "ve_v": 1.15725,
+      "vc_v": 6.624721,
+      "vce_v": 5.467471,
+      "ic_a": 0.002443308,
+      "ie_a": 0.002462234,
+      "ib_a": 1.8926e-05,
+      "note": "IC=(VCC-VC)/RC, IE=VE/RE, IB=IE-IC; from run.raw node voltages"
+    },
+    "ac": {
+      "status": "Success",
+      "engine": "ngspice-47",
+      "bjt_model": "t2n2222",
+      "vin_node": "vin (after Cin)",
+      "vout_node": "vout (after Cout at RL)",
+      "sweep": "dec 20 1 10MEG",
+      "points": [
+        {
+          "frequency_hz": 1.0,
+          "gain": 1.066069,
+          "gain_db": 0.5557,
+          "phase_deg": -127.468
+        },
+        {
+          "frequency_hz": 1.122018,
+          "gain": 1.142658,
+          "gain_db": 1.1583,
+          "phase_deg": -130.694
+        },
+        {
+          "frequency_hz": 1.258925,
+          "gain": 1.216858,
+          "gain_db": 1.7048,
+          "phase_deg": -133.976
+        },
+        {
+          "frequency_hz": 1.412538,
+          "gain": 1.287345,
+          "gain_db": 2.1939,
+          "phase_deg": -137.272
+        },
+        {
+          "frequency_hz": 1.584893,
+          "gain": 1.352995,
+          "gain_db": 2.6259,
+          "phase_deg": -140.538
+        },
+        {
+          "frequency_hz": 1.778279,
+          "gain": 1.412963,
+          "gain_db": 3.0026,
+          "phase_deg": -143.732
+        },
+        {
+          "frequency_hz": 1.995262,
+          "gain": 1.466731,
+          "gain_db": 3.327,
+          "phase_deg": -146.819
+        },
+        {
+          "frequency_hz": 2.238721,
+          "gain": 1.51411,
+          "gain_db": 3.6032,
+          "phase_deg": -149.766
+        },
+        {
+          "frequency_hz": 2.511886,
+          "gain": 1.555203,
+          "gain_db": 3.8357,
+          "phase_deg": -152.552
+        },
+        {
+          "frequency_hz": 2.818383,
+          "gain": 1.59034,
+          "gain_db": 4.0298,
+          "phase_deg": -155.159
+        },
+        {
+          "frequency_hz": 3.162278,
+          "gain": 1.620014,
+          "gain_db": 4.1904,
+          "phase_deg": -157.579
+        },
+        {
+          "frequency_hz": 3.548134,
+          "gain": 1.644806,
+          "gain_db": 4.3223,
+          "phase_deg": -159.81
+        },
+        {
+          "frequency_hz": 3.981072,
+          "gain": 1.665332,
+          "gain_db": 4.43,
+          "phase_deg": -161.854
+        },
+        {
+          "frequency_hz": 4.466836,
+          "gain": 1.682195,
+          "gain_db": 4.5175,
+          "phase_deg": -163.717
+        },
+        {
+          "frequency_hz": 5.011872,
+          "gain": 1.695961,
+          "gain_db": 4.5883,
+          "phase_deg": -165.408
+        },
+        {
+          "frequency_hz": 5.623413,
+          "gain": 1.70714,
+          "gain_db": 4.6454,
+          "phase_deg": -166.937
+        },
+        {
+          "frequency_hz": 6.309573,
+          "gain": 1.716179,
+          "gain_db": 4.6913,
+          "phase_deg": -168.317
+        },
+        {
+          "frequency_hz": 7.079458,
+          "gain": 1.723463,
+          "gain_db": 4.728,
+          "phase_deg": -169.558
+        },
+        {
+          "frequency_hz": 7.943282,
+          "gain": 1.729315,
+          "gain_db": 4.7575,
+          "phase_deg": -170.672
+        },
+        {
+          "frequency_hz": 8.912509,
+          "gain": 1.734006,
+          "gain_db": 4.781,
+          "phase_deg": -171.671
+        },
+        {
+          "frequency_hz": 10.0,
+          "gain": 1.737759,
+          "gain_db": 4.7998,
+          "phase_deg": -172.566
+        },
+        {
+          "frequency_hz": 11.220185,
+          "gain": 1.740758,
+          "gain_db": 4.8148,
+          "phase_deg": -173.367
+        },
+        {
+          "frequency_hz": 12.589254,
+          "gain": 1.743151,
+          "gain_db": 4.8267,
+          "phase_deg": -174.083
+        },
+        {
+          "frequency_hz": 14.125375,
+          "gain": 1.74506,
+          "gain_db": 4.8362,
+          "phase_deg": -174.723
+        },
+        {
+          "frequency_hz": 15.848932,
+          "gain": 1.74658,
+          "gain_db": 4.8438,
+          "phase_deg": -175.294
+        },
+        {
+          "frequency_hz": 17.782794,
+          "gain": 1.74779,
+          "gain_db": 4.8498,
+          "phase_deg": -175.804
+        },
+        {
+          "frequency_hz": 19.952623,
+          "gain": 1.748753,
+          "gain_db": 4.8546,
+          "phase_deg": -176.259
+        },
+        {
+          "frequency_hz": 22.387211,
+          "gain": 1.749519,
+          "gain_db": 4.8584,
+          "phase_deg": -176.665
+        },
+        {
+          "frequency_hz": 25.118864,
+          "gain": 1.750129,
+          "gain_db": 4.8614,
+          "phase_deg": -177.027
+        },
+        {
+          "frequency_hz": 28.183829,
+          "gain": 1.750613,
+          "gain_db": 4.8638,
+          "phase_deg": -177.35
+        },
+        {
+          "frequency_hz": 31.622777,
+          "gain": 1.750998,
+          "gain_db": 4.8657,
+          "phase_deg": -177.638
+        },
+        {
+          "frequency_hz": 35.481339,
+          "gain": 1.751304,
+          "gain_db": 4.8672,
+          "phase_deg": -177.894
+        },
+        {
+          "frequency_hz": 39.810717,
+          "gain": 1.751548,
+          "gain_db": 4.8684,
+          "phase_deg": -178.123
+        },
+        {
+          "frequency_hz": 44.668359,
+          "gain": 1.751741,
+          "gain_db": 4.8694,
+          "phase_deg": -178.327
+        },
+        {
+          "frequency_hz": 50.118723,
+          "gain": 1.751894,
+          "gain_db": 4.8702,
+          "phase_deg": -178.509
+        },
+        {
+          "frequency_hz": 56.234133,
+          "gain": 1.752017,
+          "gain_db": 4.8708,
+          "phase_deg": -178.671
+        },
+        {
+          "frequency_hz": 63.095734,
+          "gain": 1.752113,
+          "gain_db": 4.8712,
+          "phase_deg": -178.816
+        },
+        {
+          "frequency_hz": 70.794578,
+          "gain": 1.75219,
+          "gain_db": 4.8716,
+          "phase_deg": -178.945
+        },
+        {
+          "frequency_hz": 79.432823,
+          "gain": 1.752252,
+          "gain_db": 4.8719,
+          "phase_deg": -179.059
+        },
+        {
+          "frequency_hz": 89.125094,
+          "gain": 1.7523,
+          "gain_db": 4.8722,
+          "phase_deg": -179.162
+        },
+        {
+          "frequency_hz": 100.0,
+          "gain": 1.752339,
+          "gain_db": 4.8724,
+          "phase_deg": -179.253
+        },
+        {
+          "frequency_hz": 112.201845,
+          "gain": 1.75237,
+          "gain_db": 4.8725,
+          "phase_deg": -179.334
+        },
+        {
+          "frequency_hz": 125.892541,
+          "gain": 1.752394,
+          "gain_db": 4.8726,
+          "phase_deg": -179.407
+        },
+        {
+          "frequency_hz": 141.253754,
+          "gain": 1.752413,
+          "gain_db": 4.8727,
+          "phase_deg": -179.472
+        },
+        {
+          "frequency_hz": 158.489319,
+          "gain": 1.752429,
+          "gain_db": 4.8728,
+          "phase_deg": -179.529
+        },
+        {
+          "frequency_hz": 177.827941,
+          "gain": 1.752441,
+          "gain_db": 4.8729,
+          "phase_deg": -179.581
+        },
+        {
+          "frequency_hz": 199.526231,
+          "gain": 1.752451,
+          "gain_db": 4.8729,
+          "phase_deg": -179.627
+        },
+        {
+          "frequency_hz": 223.872114,
+          "gain": 1.752458,
+          "gain_db": 4.873,
+          "phase_deg": -179.667
+        },
+        {
+          "frequency_hz": 251.188643,
+          "gain": 1.752464,
+          "gain_db": 4.873,
+          "phase_deg": -179.704
+        },
+        {
+          "frequency_hz": 281.838293,
+          "gain": 1.752469,
+          "gain_db": 4.873,
+          "phase_deg": -179.736
+        },
+        {
+          "frequency_hz": 316.227766,
+          "gain": 1.752473,
+          "gain_db": 4.873,
+          "phase_deg": -179.765
+        },
+        {
+          "frequency_hz": 354.813389,
+          "gain": 1.752476,
+          "gain_db": 4.873,
+          "phase_deg": -179.791
+        },
+        {
+          "frequency_hz": 398.107171,
+          "gain": 1.752479,
+          "gain_db": 4.8731,
+          "phase_deg": -179.815
+        },
+        {
+          "frequency_hz": 446.683592,
+          "gain": 1.752481,
+          "gain_db": 4.8731,
+          "phase_deg": -179.835
+        },
+        {
+          "frequency_hz": 501.187234,
+          "gain": 1.752482,
+          "gain_db": 4.8731,
+          "phase_deg": -179.854
+        },
+        {
+          "frequency_hz": 562.341325,
+          "gain": 1.752483,
+          "gain_db": 4.8731,
+          "phase_deg": -179.87
+        },
+        {
+          "frequency_hz": 630.957344,
+          "gain": 1.752484,
+          "gain_db": 4.8731,
+          "phase_deg": -179.885
+        },
+        {
+          "frequency_hz": 707.945784,
+          "gain": 1.752485,
+          "gain_db": 4.8731,
+          "phase_deg": -179.899
+        },
+        {
+          "frequency_hz": 794.328235,
+          "gain": 1.752486,
+          "gain_db": 4.8731,
+          "phase_deg": -179.911
+        },
+        {
+          "frequency_hz": 891.250938,
+          "gain": 1.752486,
+          "gain_db": 4.8731,
+          "phase_deg": -179.921
+        },
+        {
+          "frequency_hz": 1000.0,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": -179.931
+        },
+        {
+          "frequency_hz": 1122.018454,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": -179.94
+        },
+        {
+          "frequency_hz": 1258.925412,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": -179.948
+        },
+        {
+          "frequency_hz": 1412.537545,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": -179.955
+        },
+        {
+          "frequency_hz": 1584.893192,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": -179.962
+        },
+        {
+          "frequency_hz": 1778.27941,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": -179.968
+        },
+        {
+          "frequency_hz": 1995.262315,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": -179.974
+        },
+        {
+          "frequency_hz": 2238.721139,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": -179.98
+        },
+        {
+          "frequency_hz": 2511.886432,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": -179.985
+        },
+        {
+          "frequency_hz": 2818.382931,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": -179.99
+        },
+        {
+          "frequency_hz": 3162.27766,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": -179.995
+        },
+        {
+          "frequency_hz": 3548.133892,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": -180.0
+        },
+        {
+          "frequency_hz": 3981.071706,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.995
+        },
+        {
+          "frequency_hz": 4466.835922,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.99
+        },
+        {
+          "frequency_hz": 5011.872336,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.985
+        },
+        {
+          "frequency_hz": 5623.413252,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.98
+        },
+        {
+          "frequency_hz": 6309.573445,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.975
+        },
+        {
+          "frequency_hz": 7079.457844,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.969
+        },
+        {
+          "frequency_hz": 7943.282347,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.963
+        },
+        {
+          "frequency_hz": 8912.509381,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.956
+        },
+        {
+          "frequency_hz": 10000.0,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.948
+        },
+        {
+          "frequency_hz": 11220.184543,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.94
+        },
+        {
+          "frequency_hz": 12589.254118,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.932
+        },
+        {
+          "frequency_hz": 14125.375446,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.922
+        },
+        {
+          "frequency_hz": 15848.931925,
+          "gain": 1.752488,
+          "gain_db": 4.8731,
+          "phase_deg": 179.911
+        },
+        {
+          "frequency_hz": 17782.7941,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": 179.899
+        },
+        {
+          "frequency_hz": 19952.62315,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": 179.886
+        },
+        {
+          "frequency_hz": 22387.211386,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": 179.871
+        },
+        {
+          "frequency_hz": 25118.864315,
+          "gain": 1.752487,
+          "gain_db": 4.8731,
+          "phase_deg": 179.855
+        },
+        {
+          "frequency_hz": 28183.829313,
+          "gain": 1.752486,
+          "gain_db": 4.8731,
+          "phase_deg": 179.836
+        },
+        {
+          "frequency_hz": 31622.776602,
+          "gain": 1.752486,
+          "gain_db": 4.8731,
+          "phase_deg": 179.816
+        },
+        {
+          "frequency_hz": 35481.338923,
+          "gain": 1.752485,
+          "gain_db": 4.8731,
+          "phase_deg": 179.793
+        },
+        {
+          "frequency_hz": 39810.717055,
+          "gain": 1.752485,
+          "gain_db": 4.8731,
+          "phase_deg": 179.767
+        },
+        {
+          "frequency_hz": 44668.359215,
+          "gain": 1.752484,
+          "gain_db": 4.8731,
+          "phase_deg": 179.738
+        },
+        {
+          "frequency_hz": 50118.723363,
+          "gain": 1.752483,
+          "gain_db": 4.8731,
+          "phase_deg": 179.706
+        },
+        {
+          "frequency_hz": 56234.132519,
+          "gain": 1.752482,
+          "gain_db": 4.8731,
+          "phase_deg": 179.669
+        },
+        {
+          "frequency_hz": 63095.734448,
+          "gain": 1.75248,
+          "gain_db": 4.8731,
+          "phase_deg": 179.629
+        },
+        {
+          "frequency_hz": 70794.578438,
+          "gain": 1.752478,
+          "gain_db": 4.8731,
+          "phase_deg": 179.583
+        },
+        {
+          "frequency_hz": 79432.823472,
+          "gain": 1.752475,
+          "gain_db": 4.873,
+          "phase_deg": 179.532
+        },
+        {
+          "frequency_hz": 89125.093813,
+          "gain": 1.752472,
+          "gain_db": 4.873,
+          "phase_deg": 179.475
+        },
+        {
+          "frequency_hz": 100000.0,
+          "gain": 1.752467,
+          "gain_db": 4.873,
+          "phase_deg": 179.411
+        },
+        {
+          "frequency_hz": 112201.84543,
+          "gain": 1.752462,
+          "gain_db": 4.873,
+          "phase_deg": 179.338
+        },
+        {
+          "frequency_hz": 125892.541179,
+          "gain": 1.752455,
+          "gain_db": 4.8729,
+          "phase_deg": 179.258
+        },
+        {
+          "frequency_hz": 141253.754462,
+          "gain": 1.752447,
+          "gain_db": 4.8729,
+          "phase_deg": 179.167
+        },
+        {
+          "frequency_hz": 158489.319246,
+          "gain": 1.752436,
+          "gain_db": 4.8728,
+          "phase_deg": 179.065
+        },
+        {
+          "frequency_hz": 177827.941004,
+          "gain": 1.752423,
+          "gain_db": 4.8728,
+          "phase_deg": 178.951
+        },
+        {
+          "frequency_hz": 199526.231497,
+          "gain": 1.752406,
+          "gain_db": 4.8727,
+          "phase_deg": 178.823
+        },
+        {
+          "frequency_hz": 223872.113857,
+          "gain": 1.752385,
+          "gain_db": 4.8726,
+          "phase_deg": 178.679
+        },
+        {
+          "frequency_hz": 251188.643151,
+          "gain": 1.752358,
+          "gain_db": 4.8725,
+          "phase_deg": 178.518
+        },
+        {
+          "frequency_hz": 281838.293126,
+          "gain": 1.752324,
+          "gain_db": 4.8723,
+          "phase_deg": 178.337
+        },
+        {
+          "frequency_hz": 316227.766017,
+          "gain": 1.752282,
+          "gain_db": 4.8721,
+          "phase_deg": 178.134
+        },
+        {
+          "frequency_hz": 354813.389234,
+          "gain": 1.752229,
+          "gain_db": 4.8718,
+          "phase_deg": 177.906
+        },
+        {
+          "frequency_hz": 398107.170553,
+          "gain": 1.752162,
+          "gain_db": 4.8715,
+          "phase_deg": 177.651
+        },
+        {
+          "frequency_hz": 446683.592151,
+          "gain": 1.752077,
+          "gain_db": 4.8711,
+          "phase_deg": 177.364
+        },
+        {
+          "frequency_hz": 501187.233627,
+          "gain": 1.751971,
+          "gain_db": 4.8705,
+          "phase_deg": 177.043
+        },
+        {
+          "frequency_hz": 562341.32519,
+          "gain": 1.751837,
+          "gain_db": 4.8699,
+          "phase_deg": 176.682
+        },
+        {
+          "frequency_hz": 630957.34448,
+          "gain": 1.751669,
+          "gain_db": 4.869,
+          "phase_deg": 176.278
+        },
+        {
+          "frequency_hz": 707945.784384,
+          "gain": 1.751457,
+          "gain_db": 4.868,
+          "phase_deg": 175.824
+        },
+        {
+          "frequency_hz": 794328.234724,
+          "gain": 1.751191,
+          "gain_db": 4.8667,
+          "phase_deg": 175.315
+        },
+        {
+          "frequency_hz": 891250.938134,
+          "gain": 1.750856,
+          "gain_db": 4.865,
+          "phase_deg": 174.744
+        },
+        {
+          "frequency_hz": 1000000.0,
+          "gain": 1.750434,
+          "gain_db": 4.8629,
+          "phase_deg": 174.104
+        },
+        {
+          "frequency_hz": 1122018.454302,
+          "gain": 1.749905,
+          "gain_db": 4.8603,
+          "phase_deg": 173.386
+        },
+        {
+          "frequency_hz": 1258925.411794,
+          "gain": 1.74924,
+          "gain_db": 4.857,
+          "phase_deg": 172.581
+        },
+        {
+          "frequency_hz": 1412537.544623,
+          "gain": 1.748404,
+          "gain_db": 4.8528,
+          "phase_deg": 171.68
+        },
+        {
+          "frequency_hz": 1584893.192461,
+          "gain": 1.747355,
+          "gain_db": 4.8476,
+          "phase_deg": 170.669
+        },
+        {
+          "frequency_hz": 1778279.410039,
+          "gain": 1.74604,
+          "gain_db": 4.8411,
+          "phase_deg": 169.537
+        },
+        {
+          "frequency_hz": 1995262.314969,
+          "gain": 1.744392,
+          "gain_db": 4.8329,
+          "phase_deg": 168.27
+        },
+        {
+          "frequency_hz": 2238721.138568,
+          "gain": 1.742329,
+          "gain_db": 4.8226,
+          "phase_deg": 166.852
+        },
+        {
+          "frequency_hz": 2511886.43151,
+          "gain": 1.739752,
+          "gain_db": 4.8097,
+          "phase_deg": 165.266
+        },
+        {
+          "frequency_hz": 2818382.931264,
+          "gain": 1.736538,
+          "gain_db": 4.7937,
+          "phase_deg": 163.494
+        },
+        {
+          "frequency_hz": 3162277.660168,
+          "gain": 1.732539,
+          "gain_db": 4.7737,
+          "phase_deg": 161.516
+        },
+        {
+          "frequency_hz": 3548133.892336,
+          "gain": 1.727579,
+          "gain_db": 4.7488,
+          "phase_deg": 159.312
+        },
+        {
+          "frequency_hz": 3981071.705535,
+          "gain": 1.721448,
+          "gain_db": 4.7179,
+          "phase_deg": 156.858
+        },
+        {
+          "frequency_hz": 4466835.92151,
+          "gain": 1.713903,
+          "gain_db": 4.6797,
+          "phase_deg": 154.134
+        },
+        {
+          "frequency_hz": 5011872.336273,
+          "gain": 1.70467,
+          "gain_db": 4.6328,
+          "phase_deg": 151.115
+        },
+        {
+          "frequency_hz": 5623413.251903,
+          "gain": 1.693447,
+          "gain_db": 4.5754,
+          "phase_deg": 147.78
+        },
+        {
+          "frequency_hz": 6309573.444802,
+          "gain": 1.679916,
+          "gain_db": 4.5058,
+          "phase_deg": 144.11
+        },
+        {
+          "frequency_hz": 7079457.843841,
+          "gain": 1.663759,
+          "gain_db": 4.4218,
+          "phase_deg": 140.087
+        },
+        {
+          "frequency_hz": 7943282.347243,
+          "gain": 1.64469,
+          "gain_db": 4.3217,
+          "phase_deg": 135.701
+        },
+        {
+          "frequency_hz": 8912509.381337,
+          "gain": 1.622485,
+          "gain_db": 4.2036,
+          "phase_deg": 130.948
+        },
+        {
+          "frequency_hz": 10000000.0,
+          "gain": 1.597033,
+          "gain_db": 4.0663,
+          "phase_deg": 125.831
+        }
+      ],
+      "midband_gain_db": 4.8731,
+      "midband_freq_hz": 5011.8723,
+      "phase_deg": 179.985,
+      "f_low_hz": 1.412537544622754,
+      "f_high_hz": "not determined in sweep range"
+    },
+    "transient_10mv_1khz": {
+      "status": "Success",
+      "engine": "ngspice-47",
+      "bjt_model": "t2n2222",
+      "source_peak_v": 0.01,
+      "source_freq_hz": 1000.0,
+      "measured_vin_peak_v": 0.01,
+      "measured_vout_peak_v": 0.017524,
+      "gain": 1.7525,
+      "phase_deg": -179.931,
+      "period_s": 0.001,
+      "points": [
+        {
+          "time_s": 0.0,
+          "vin_v": 1.979097,
+          "vout_v": 0.0
+        },
+        {
+          "time_s": 8e-07,
+          "vin_v": 1.979148,
+          "vout_v": -8.9e-05
+        },
+        {
+          "time_s": 1.64e-05,
+          "vin_v": 1.980126,
+          "vout_v": -0.001804
+        },
+        {
+          "time_s": 4.14e-05,
+          "vin_v": 1.981669,
+          "vout_v": -0.004507
+        },
+        {
+          "time_s": 6.64e-05,
+          "vin_v": 1.983149,
+          "vout_v": -0.0071
+        },
+        {
+          "time_s": 9.14e-05,
+          "vin_v": 1.984528,
+          "vout_v": -0.009515
+        },
+        {
+          "time_s": 0.0001164,
+          "vin_v": 1.985774,
+          "vout_v": -0.011697
+        },
+        {
+          "time_s": 0.0001414,
+          "vin_v": 1.986855,
+          "vout_v": -0.013589
+        },
+        {
+          "time_s": 0.0001664,
+          "vin_v": 1.987744,
+          "vout_v": -0.015146
+        },
+        {
+          "time_s": 0.0001914,
+          "vin_v": 1.988421,
+          "vout_v": -0.016328
+        },
+        {
+          "time_s": 0.0002164,
+          "vin_v": 1.988867,
+          "vout_v": -0.017108
+        },
+        {
+          "time_s": 0.0002414,
+          "vin_v": 1.989073,
+          "vout_v": -0.017465
+        },
+        {
+          "time_s": 0.0002664,
+          "vin_v": 1.989033,
+          "vout_v": -0.017392
+        },
+        {
+          "time_s": 0.0002914,
+          "vin_v": 1.988748,
+          "vout_v": -0.016889
+        },
+        {
+          "time_s": 0.0003164,
+          "vin_v": 1.988226,
+          "vout_v": -0.01597
+        },
+        {
+          "time_s": 0.0003414,
+          "vin_v": 1.987478,
+          "vout_v": -0.014656
+        },
+        {
+          "time_s": 0.0003664,
+          "vin_v": 1.986523,
+          "vout_v": -0.012981
+        },
+        {
+          "time_s": 0.0003914,
+          "vin_v": 1.985386,
+          "vout_v": -0.010985
+        },
+        {
+          "time_s": 0.0004164,
+          "vin_v": 1.984093,
+          "vout_v": -0.008718
+        },
+        {
+          "time_s": 0.0004414,
+          "vin_v": 1.982677,
+          "vout_v": -0.006235
+        },
+        {
+          "time_s": 0.0004664,
+          "vin_v": 1.981173,
+          "vout_v": -0.003598
+        },
+        {
+          "time_s": 0.0004914,
+          "vin_v": 1.979618,
+          "vout_v": -0.000871
+        },
+        {
+          "time_s": 0.0005164,
+          "vin_v": 1.978049,
+          "vout_v": 0.001878
+        },
+        {
+          "time_s": 0.0005414,
+          "vin_v": 1.976506,
+          "vout_v": 0.004582
+        },
+        {
+          "time_s": 0.0005664,
+          "vin_v": 1.975026,
+          "vout_v": 0.007173
+        },
+        {
+          "time_s": 0.0005914,
+          "vin_v": 1.973647,
+          "vout_v": 0.009589
+        },
+        {
+          "time_s": 0.0006164,
+          "vin_v": 1.972401,
+          "vout_v": 0.01177
+        },
+        {
+          "time_s": 0.0006414,
+          "vin_v": 1.97132,
+          "vout_v": 0.013661
+        },
+        {
+          "time_s": 0.0006664,
+          "vin_v": 1.970431,
+          "vout_v": 0.015217
+        },
+        {
+          "time_s": 0.0006914,
+          "vin_v": 1.969754,
+          "vout_v": 0.0164
+        },
+        {
+          "time_s": 0.0007164,
+          "vin_v": 1.969307,
+          "vout_v": 0.017179
+        },
+        {
+          "time_s": 0.0007414,
+          "vin_v": 1.969101,
+          "vout_v": 0.017537
+        },
+        {
+          "time_s": 0.0007664,
+          "vin_v": 1.969142,
+          "vout_v": 0.017463
+        },
+        {
+          "time_s": 0.0007914,
+          "vin_v": 1.969426,
+          "vout_v": 0.016961
+        },
+        {
+          "time_s": 0.0008164,
+          "vin_v": 1.969949,
+          "vout_v": 0.016042
+        },
+        {
+          "time_s": 0.0008414,
+          "vin_v": 1.970697,
+          "vout_v": 0.014729
+        },
+        {
+          "time_s": 0.0008664,
+          "vin_v": 1.971651,
+          "vout_v": 0.013053
+        },
+        {
+          "time_s": 0.0008914,
+          "vin_v": 1.972789,
+          "vout_v": 0.011058
+        },
+        {
+          "time_s": 0.0009164,
+          "vin_v": 1.974082,
+          "vout_v": 0.008791
+        },
+        {
+          "time_s": 0.0009414,
+          "vin_v": 1.975497,
+          "vout_v": 0.006308
+        },
+        {
+          "time_s": 0.0009664,
+          "vin_v": 1.977002,
+          "vout_v": 0.003671
+        },
+        {
+          "time_s": 0.0009914,
+          "vin_v": 1.978557,
+          "vout_v": 0.000945
+        },
+        {
+          "time_s": 0.0010164,
+          "vin_v": 1.980126,
+          "vout_v": -0.001804
+        },
+        {
+          "time_s": 0.0010414,
+          "vin_v": 1.981669,
+          "vout_v": -0.004508
+        },
+        {
+          "time_s": 0.0010664,
+          "vin_v": 1.983149,
+          "vout_v": -0.0071
+        },
+        {
+          "time_s": 0.0010914,
+          "vin_v": 1.984528,
+          "vout_v": -0.009516
+        },
+        {
+          "time_s": 0.0011164,
+          "vin_v": 1.985774,
+          "vout_v": -0.011697
+        },
+        {
+          "time_s": 0.0011414,
+          "vin_v": 1.986855,
+          "vout_v": -0.013589
+        },
+        {
+          "time_s": 0.0011664,
+          "vin_v": 1.987744,
+          "vout_v": -0.015146
+        },
+        {
+          "time_s": 0.0011914,
+          "vin_v": 1.988421,
+          "vout_v": -0.016328
+        },
+        {
+          "time_s": 0.0012164,
+          "vin_v": 1.988867,
+          "vout_v": -0.017108
+        },
+        {
+          "time_s": 0.0012414,
+          "vin_v": 1.989073,
+          "vout_v": -0.017466
+        },
+        {
+          "time_s": 0.0012664,
+          "vin_v": 1.989033,
+          "vout_v": -0.017392
+        },
+        {
+          "time_s": 0.0012914,
+          "vin_v": 1.988748,
+          "vout_v": -0.01689
+        },
+        {
+          "time_s": 0.0013164,
+          "vin_v": 1.988226,
+          "vout_v": -0.01597
+        },
+        {
+          "time_s": 0.0013414,
+          "vin_v": 1.987478,
+          "vout_v": -0.014657
+        },
+        {
+          "time_s": 0.0013664,
+          "vin_v": 1.986523,
+          "vout_v": -0.012981
+        },
+        {
+          "time_s": 0.0013914,
+          "vin_v": 1.985386,
+          "vout_v": -0.010985
+        },
+        {
+          "time_s": 0.0014164,
+          "vin_v": 1.984093,
+          "vout_v": -0.008718
+        },
+        {
+          "time_s": 0.0014414,
+          "vin_v": 1.982677,
+          "vout_v": -0.006235
+        },
+        {
+          "time_s": 0.0014664,
+          "vin_v": 1.981173,
+          "vout_v": -0.003598
+        },
+        {
+          "time_s": 0.0014914,
+          "vin_v": 1.979618,
+          "vout_v": -0.000871
+        },
+        {
+          "time_s": 0.0015164,
+          "vin_v": 1.978049,
+          "vout_v": 0.001878
+        },
+        {
+          "time_s": 0.0015414,
+          "vin_v": 1.976506,
+          "vout_v": 0.004581
+        },
+        {
+          "time_s": 0.0015664,
+          "vin_v": 1.975026,
+          "vout_v": 0.007173
+        },
+        {
+          "time_s": 0.0015914,
+          "vin_v": 1.973647,
+          "vout_v": 0.009589
+        },
+        {
+          "time_s": 0.0016164,
+          "vin_v": 1.972401,
+          "vout_v": 0.011769
+        },
+        {
+          "time_s": 0.0016414,
+          "vin_v": 1.97132,
+          "vout_v": 0.013661
+        },
+        {
+          "time_s": 0.0016664,
+          "vin_v": 1.970431,
+          "vout_v": 0.015217
+        },
+        {
+          "time_s": 0.0016914,
+          "vin_v": 1.969754,
+          "vout_v": 0.0164
+        },
+        {
+          "time_s": 0.0017164,
+          "vin_v": 1.969307,
+          "vout_v": 0.017179
+        },
+        {
+          "time_s": 0.0017414,
+          "vin_v": 1.969102,
+          "vout_v": 0.017537
+        },
+        {
+          "time_s": 0.0017664,
+          "vin_v": 1.969142,
+          "vout_v": 0.017463
+        },
+        {
+          "time_s": 0.0017914,
+          "vin_v": 1.969426,
+          "vout_v": 0.016961
+        },
+        {
+          "time_s": 0.0018164,
+          "vin_v": 1.969949,
+          "vout_v": 0.016041
+        },
+        {
+          "time_s": 0.0018414,
+          "vin_v": 1.970697,
+          "vout_v": 0.014728
+        },
+        {
+          "time_s": 0.0018664,
+          "vin_v": 1.971652,
+          "vout_v": 0.013053
+        },
+        {
+          "time_s": 0.0018914,
+          "vin_v": 1.972789,
+          "vout_v": 0.011057
+        },
+        {
+          "time_s": 0.0019164,
+          "vin_v": 1.974082,
+          "vout_v": 0.008791
+        },
+        {
+          "time_s": 0.0019414,
+          "vin_v": 1.975498,
+          "vout_v": 0.006308
+        },
+        {
+          "time_s": 0.0019664,
+          "vin_v": 1.977002,
+          "vout_v": 0.003671
+        },
+        {
+          "time_s": 0.0019914,
+          "vin_v": 1.978557,
+          "vout_v": 0.000944
+        },
+        {
+          "time_s": 0.0020164,
+          "vin_v": 1.980126,
+          "vout_v": -0.001805
+        },
+        {
+          "time_s": 0.0020414,
+          "vin_v": 1.981669,
+          "vout_v": -0.004508
+        },
+        {
+          "time_s": 0.0020664,
+          "vin_v": 1.983149,
+          "vout_v": -0.0071
+        },
+        {
+          "time_s": 0.0020914,
+          "vin_v": 1.984528,
+          "vout_v": -0.009516
+        },
+        {
+          "time_s": 0.0021164,
+          "vin_v": 1.985774,
+          "vout_v": -0.011697
+        },
+        {
+          "time_s": 0.0021414,
+          "vin_v": 1.986855,
+          "vout_v": -0.01359
+        },
+        {
+          "time_s": 0.0021664,
+          "vin_v": 1.987744,
+          "vout_v": -0.015146
+        },
+        {
+          "time_s": 0.0021914,
+          "vin_v": 1.988421,
+          "vout_v": -0.016329
+        },
+        {
+          "time_s": 0.0022164,
+          "vin_v": 1.988868,
+          "vout_v": -0.017109
+        },
+        {
+          "time_s": 0.0022414,
+          "vin_v": 1.989073,
+          "vout_v": -0.017466
+        },
+        {
+          "time_s": 0.0022664,
+          "vin_v": 1.989033,
+          "vout_v": -0.017393
+        },
+        {
+          "time_s": 0.0022914,
+          "vin_v": 1.988748,
+          "vout_v": -0.01689
+        },
+        {
+          "time_s": 0.0023164,
+          "vin_v": 1.988226,
+          "vout_v": -0.015971
+        },
+        {
+          "time_s": 0.0023414,
+          "vin_v": 1.987478,
+          "vout_v": -0.014657
+        },
+        {
+          "time_s": 0.0023664,
+          "vin_v": 1.986523,
+          "vout_v": -0.012982
+        },
+        {
+          "time_s": 0.0023914,
+          "vin_v": 1.985386,
+          "vout_v": -0.010986
+        },
+        {
+          "time_s": 0.0024164,
+          "vin_v": 1.984093,
+          "vout_v": -0.008718
+        },
+        {
+          "time_s": 0.0024414,
+          "vin_v": 1.982677,
+          "vout_v": -0.006236
+        },
+        {
+          "time_s": 0.0024664,
+          "vin_v": 1.981173,
+          "vout_v": -0.003598
+        },
+        {
+          "time_s": 0.0024914,
+          "vin_v": 1.979618,
+          "vout_v": -0.000872
+        },
+        {
+          "time_s": 0.0025164,
+          "vin_v": 1.978049,
+          "vout_v": 0.001877
+        },
+        {
+          "time_s": 0.0025414,
+          "vin_v": 1.976506,
+          "vout_v": 0.004581
+        },
+        {
+          "time_s": 0.0025664,
+          "vin_v": 1.975026,
+          "vout_v": 0.007172
+        },
+        {
+          "time_s": 0.0025914,
+          "vin_v": 1.973647,
+          "vout_v": 0.009588
+        },
+        {
+          "time_s": 0.0026164,
+          "vin_v": 1.972401,
+          "vout_v": 0.011769
+        },
+        {
+          "time_s": 0.0026414,
+          "vin_v": 1.97132,
+          "vout_v": 0.013661
+        },
+        {
+          "time_s": 0.0026664,
+          "vin_v": 1.970431,
+          "vout_v": 0.015217
+        },
+        {
+          "time_s": 0.0026914,
+          "vin_v": 1.969754,
+          "vout_v": 0.016399
+        },
+        {
+          "time_s": 0.0027164,
+          "vin_v": 1.969307,
+          "vout_v": 0.017179
+        },
+        {
+          "time_s": 0.0027414,
+          "vin_v": 1.969102,
+          "vout_v": 0.017536
+        },
+        {
+          "time_s": 0.0027664,
+          "vin_v": 1.969142,
+          "vout_v": 0.017463
+        },
+        {
+          "time_s": 0.0027914,
+          "vin_v": 1.969427,
+          "vout_v": 0.01696
+        },
+        {
+          "time_s": 0.0028164,
+          "vin_v": 1.969949,
+          "vout_v": 0.016041
+        },
+        {
+          "time_s": 0.0028414,
+          "vin_v": 1.970697,
+          "vout_v": 0.014728
+        },
+        {
+          "time_s": 0.0028664,
+          "vin_v": 1.971652,
+          "vout_v": 0.013053
+        },
+        {
+          "time_s": 0.0028914,
+          "vin_v": 1.972789,
+          "vout_v": 0.011057
+        },
+        {
+          "time_s": 0.0029164,
+          "vin_v": 1.974082,
+          "vout_v": 0.00879
+        },
+        {
+          "time_s": 0.0029414,
+          "vin_v": 1.975498,
+          "vout_v": 0.006308
+        },
+        {
+          "time_s": 0.0029664,
+          "vin_v": 1.977002,
+          "vout_v": 0.003671
+        },
+        {
+          "time_s": 0.0029914,
+          "vin_v": 1.978557,
+          "vout_v": 0.000944
+        },
+        {
+          "time_s": 0.0030164,
+          "vin_v": 1.980126,
+          "vout_v": -0.001805
+        },
+        {
+          "time_s": 0.0030414,
+          "vin_v": 1.981669,
+          "vout_v": -0.004509
+        },
+        {
+          "time_s": 0.0030664,
+          "vin_v": 1.983149,
+          "vout_v": -0.007101
+        },
+        {
+          "time_s": 0.0030914,
+          "vin_v": 1.984528,
+          "vout_v": -0.009517
+        },
+        {
+          "time_s": 0.0031164,
+          "vin_v": 1.985774,
+          "vout_v": -0.011698
+        },
+        {
+          "time_s": 0.0031414,
+          "vin_v": 1.986855,
+          "vout_v": -0.01359
+        },
+        {
+          "time_s": 0.0031664,
+          "vin_v": 1.987744,
+          "vout_v": -0.015147
+        },
+        {
+          "time_s": 0.0031914,
+          "vin_v": 1.988421,
+          "vout_v": -0.016329
+        },
+        {
+          "time_s": 0.0032164,
+          "vin_v": 1.988868,
+          "vout_v": -0.017109
+        },
+        {
+          "time_s": 0.0032414,
+          "vin_v": 1.989073,
+          "vout_v": -0.017467
+        },
+        {
+          "time_s": 0.0032664,
+          "vin_v": 1.989033,
+          "vout_v": -0.017393
+        },
+        {
+          "time_s": 0.0032914,
+          "vin_v": 1.988749,
+          "vout_v": -0.016891
+        },
+        {
+          "time_s": 0.0033164,
+          "vin_v": 1.988226,
+          "vout_v": -0.015971
+        },
+        {
+          "time_s": 0.0033414,
+          "vin_v": 1.987478,
+          "vout_v": -0.014658
+        },
+        {
+          "time_s": 0.0033664,
+          "vin_v": 1.986524,
+          "vout_v": -0.012982
+        },
+        {
+          "time_s": 0.0033914,
+          "vin_v": 1.985386,
+          "vout_v": -0.010986
+        },
+        {
+          "time_s": 0.0034164,
+          "vin_v": 1.984093,
+          "vout_v": -0.008719
+        },
+        {
+          "time_s": 0.0034414,
+          "vin_v": 1.982678,
+          "vout_v": -0.006236
+        },
+        {
+          "time_s": 0.0034664,
+          "vin_v": 1.981173,
+          "vout_v": -0.003599
+        },
+        {
+          "time_s": 0.0034914,
+          "vin_v": 1.979618,
+          "vout_v": -0.000872
+        },
+        {
+          "time_s": 0.0035164,
+          "vin_v": 1.978049,
+          "vout_v": 0.001877
+        },
+        {
+          "time_s": 0.0035414,
+          "vin_v": 1.976506,
+          "vout_v": 0.00458
+        },
+        {
+          "time_s": 0.0035664,
+          "vin_v": 1.975026,
+          "vout_v": 0.007172
+        },
+        {
+          "time_s": 0.0035914,
+          "vin_v": 1.973647,
+          "vout_v": 0.009588
+        },
+        {
+          "time_s": 0.0036164,
+          "vin_v": 1.972401,
+          "vout_v": 0.011768
+        },
+        {
+          "time_s": 0.0036414,
+          "vin_v": 1.97132,
+          "vout_v": 0.01366
+        },
+        {
+          "time_s": 0.0036664,
+          "vin_v": 1.970431,
+          "vout_v": 0.015216
+        },
+        {
+          "time_s": 0.0036914,
+          "vin_v": 1.969754,
+          "vout_v": 0.016399
+        },
+        {
+          "time_s": 0.0037164,
+          "vin_v": 1.969308,
+          "vout_v": 0.017178
+        },
+        {
+          "time_s": 0.0037414,
+          "vin_v": 1.969102,
+          "vout_v": 0.017536
+        },
+        {
+          "time_s": 0.0037664,
+          "vin_v": 1.969142,
+          "vout_v": 0.017462
+        },
+        {
+          "time_s": 0.0037914,
+          "vin_v": 1.969427,
+          "vout_v": 0.01696
+        },
+        {
+          "time_s": 0.0038164,
+          "vin_v": 1.969949,
+          "vout_v": 0.016041
+        },
+        {
+          "time_s": 0.0038414,
+          "vin_v": 1.970697,
+          "vout_v": 0.014727
+        },
+        {
+          "time_s": 0.0038664,
+          "vin_v": 1.971652,
+          "vout_v": 0.013052
+        },
+        {
+          "time_s": 0.0038914,
+          "vin_v": 1.972789,
+          "vout_v": 0.011057
+        },
+        {
+          "time_s": 0.0039164,
+          "vin_v": 1.974082,
+          "vout_v": 0.00879
+        },
+        {
+          "time_s": 0.0039414,
+          "vin_v": 1.975498,
+          "vout_v": 0.006307
+        },
+        {
+          "time_s": 0.0039664,
+          "vin_v": 1.977002,
+          "vout_v": 0.00367
+        },
+        {
+          "time_s": 0.0039914,
+          "vin_v": 1.978558,
+          "vout_v": 0.000944
+        },
+        {
+          "time_s": 0.0040164,
+          "vin_v": 1.980126,
+          "vout_v": -0.001805
+        },
+        {
+          "time_s": 0.0040414,
+          "vin_v": 1.981669,
+          "vout_v": -0.004509
+        },
+        {
+          "time_s": 0.0040664,
+          "vin_v": 1.983149,
+          "vout_v": -0.007101
+        },
+        {
+          "time_s": 0.0040914,
+          "vin_v": 1.984528,
+          "vout_v": -0.009517
+        },
+        {
+          "time_s": 0.0041164,
+          "vin_v": 1.985774,
+          "vout_v": -0.011698
+        },
+        {
+          "time_s": 0.0041414,
+          "vin_v": 1.986855,
+          "vout_v": -0.01359
+        },
+        {
+          "time_s": 0.0041664,
+          "vin_v": 1.987744,
+          "vout_v": -0.015147
+        },
+        {
+          "time_s": 0.0041914,
+          "vin_v": 1.988421,
+          "vout_v": -0.01633
+        },
+        {
+          "time_s": 0.0042164,
+          "vin_v": 1.988868,
+          "vout_v": -0.017109
+        },
+        {
+          "time_s": 0.0042414,
+          "vin_v": 1.989074,
+          "vout_v": -0.017467
+        },
+        {
+          "time_s": 0.0042664,
+          "vin_v": 1.989034,
+          "vout_v": -0.017394
+        },
+        {
+          "time_s": 0.0042914,
+          "vin_v": 1.988749,
+          "vout_v": -0.016891
+        },
+        {
+          "time_s": 0.0043164,
+          "vin_v": 1.988226,
+          "vout_v": -0.015971
+        },
+        {
+          "time_s": 0.0043414,
+          "vin_v": 1.987478,
+          "vout_v": -0.014658
+        },
+        {
+          "time_s": 0.0043664,
+          "vin_v": 1.986524,
+          "vout_v": -0.012982
+        },
+        {
+          "time_s": 0.0043914,
+          "vin_v": 1.985386,
+          "vout_v": -0.010987
+        },
+        {
+          "time_s": 0.0044164,
+          "vin_v": 1.984093,
+          "vout_v": -0.008719
+        },
+        {
+          "time_s": 0.0044414,
+          "vin_v": 1.982678,
+          "vout_v": -0.006236
+        },
+        {
+          "time_s": 0.0044664,
+          "vin_v": 1.981173,
+          "vout_v": -0.003599
+        },
+        {
+          "time_s": 0.0044914,
+          "vin_v": 1.979618,
+          "vout_v": -0.000873
+        },
+        {
+          "time_s": 0.0045164,
+          "vin_v": 1.978049,
+          "vout_v": 0.001876
+        },
+        {
+          "time_s": 0.0045414,
+          "vin_v": 1.976506,
+          "vout_v": 0.00458
+        },
+        {
+          "time_s": 0.0045664,
+          "vin_v": 1.975026,
+          "vout_v": 0.007172
+        },
+        {
+          "time_s": 0.0045914,
+          "vin_v": 1.973647,
+          "vout_v": 0.009587
+        },
+        {
+          "time_s": 0.0046164,
+          "vin_v": 1.972401,
+          "vout_v": 0.011768
+        },
+        {
+          "time_s": 0.0046414,
+          "vin_v": 1.97132,
+          "vout_v": 0.01366
+        },
+        {
+          "time_s": 0.0046664,
+          "vin_v": 1.970431,
+          "vout_v": 0.015216
+        },
+        {
+          "time_s": 0.0046914,
+          "vin_v": 1.969754,
+          "vout_v": 0.016398
+        },
+        {
+          "time_s": 0.0047164,
+          "vin_v": 1.969308,
+          "vout_v": 0.017178
+        },
+        {
+          "time_s": 0.0047414,
+          "vin_v": 1.969102,
+          "vout_v": 0.017535
+        },
+        {
+          "time_s": 0.0047664,
+          "vin_v": 1.969142,
+          "vout_v": 0.017462
+        },
+        {
+          "time_s": 0.0047914,
+          "vin_v": 1.969427,
+          "vout_v": 0.016959
+        },
+        {
+          "time_s": 0.0048164,
+          "vin_v": 1.969949,
+          "vout_v": 0.01604
+        },
+        {
+          "time_s": 0.0048414,
+          "vin_v": 1.970697,
+          "vout_v": 0.014727
+        },
+        {
+          "time_s": 0.0048664,
+          "vin_v": 1.971652,
+          "vout_v": 0.013052
+        },
+        {
+          "time_s": 0.0048914,
+          "vin_v": 1.972789,
+          "vout_v": 0.011056
+        },
+        {
+          "time_s": 0.0049164,
+          "vin_v": 1.974082,
+          "vout_v": 0.008789
+        },
+        {
+          "time_s": 0.0049414,
+          "vin_v": 1.975498,
+          "vout_v": 0.006307
+        },
+        {
+          "time_s": 0.0049664,
+          "vin_v": 1.977002,
+          "vout_v": 0.00367
+        },
+        {
+          "time_s": 0.0049914,
+          "vin_v": 1.978558,
+          "vout_v": 0.000943
+        }
+      ]
+    },
+    "transient_20mv_10khz": {
+      "status": "Success",
+      "source_peak_v": 0.02,
+      "source_freq_hz": 10000.0,
+      "measured_vin_peak_v": 0.019999,
+      "measured_vout_peak_v": 0.035048,
+      "period_s": 0.0001,
+      "phase_deg": 179.948
+    }
+  }
+}
